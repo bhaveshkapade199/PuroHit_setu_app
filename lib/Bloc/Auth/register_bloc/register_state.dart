@@ -18,6 +18,10 @@ abstract class RegisterState extends Equatable {
   final bool emailOtpSent;
   final bool emailVerified;
 
+  //for the password visible
+
+  final bool isPasswordVisible;
+
   const RegisterState({
     this.gender = "",
     this.religion = "",
@@ -30,6 +34,8 @@ abstract class RegisterState extends Equatable {
 
     this.emailOtpSent = false,
     this.emailVerified = false,
+
+    this.isPasswordVisible = false,
   });
 
   @override
@@ -65,6 +71,7 @@ class RegisterInitialState extends RegisterState {
 
     super.emailOtpSent,
     super.emailVerified,
+    super.isPasswordVisible
   });
 }
 
@@ -149,6 +156,7 @@ class RegisterErrorState extends RegisterState {
 
     super.emailOtpSent,
     super.emailVerified,
+    super.isPasswordVisible,
   });
 
   @override
@@ -165,5 +173,6 @@ class RegisterErrorState extends RegisterState {
 
     emailOtpSent,
     emailVerified,
+    isPasswordVisible,
   ];
 }

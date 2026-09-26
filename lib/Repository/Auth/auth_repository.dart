@@ -30,7 +30,7 @@ class AuthRepository {
     required int experienceYears,
     required String languagePreference,
   }) async {
-    final registerApi = ApiEndpoint().BaseUrl + ApiEndpoint().GurujiRegApi;
+    final registerApi = ApiEndpoint().baseUrl + ApiEndpoint().gurujiRegApi;
 
     debugPrint("========================================");
     debugPrint("REGISTER API: $registerApi");
@@ -113,7 +113,7 @@ class AuthRepository {
   //Create the function for the login
 
   Future<GurujiLoginModel?> login(String phoneNum, String password) async {
-    final loginApi = ApiEndpoint().BaseUrl + ApiEndpoint().GurujiLogin;
+    final loginApi = ApiEndpoint().baseUrl + ApiEndpoint().gurujiLogin;
 
     debugPrint('Login API: $loginApi');
 

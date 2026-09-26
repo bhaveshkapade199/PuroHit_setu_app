@@ -367,24 +367,65 @@ class RegisterScreen extends StatelessWidget {
                     const SizedBox(height: 10),
 
                     // Password
-                    FormTextField(
-                      controller: passwordController,
-                      label: "Enter Password",
-                      prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                      obscureText: true,
-                    ),
+                    BlocBuilder<RegisterBloc, RegisterState>(
+                      builder: (context, state) {
+                        return FormTextField(
+                          controller: passwordController,
 
+                          label: "Enter Password",
+                          prefixIcon: const Icon(
+                            Icons.lock,
+                            color: Colors.white,
+                          ),
+                          obscureText: !state.isPasswordVisible,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              state.isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              context.read<RegisterBloc>().add(
+                                PasswordVisibilityEvent(
+                                  !state.isPasswordVisible,
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 10),
 
                     // Confirm Password
-                    FormTextField(
-                      controller: confirmPasswordController,
-                      label: "Confirm Password",
-                      prefixIcon: const Icon(
-                        Icons.lock_outline,
-                        color: Colors.white,
-                      ),
-                      obscureText: true,
+                    BlocBuilder<RegisterBloc, RegisterState>(
+                      builder: (context, state) {
+                        return FormTextField(
+                          controller: confirmPasswordController,
+                          label: "Enter Confirm Password",
+                          prefixIcon: const Icon(
+                            Icons.lock,
+                            color: Colors.white,
+                          ),
+                          obscureText: !state.isPasswordVisible,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              state.isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              context.read<RegisterBloc>().add(
+                                PasswordVisibilityEvent(
+                                  !state.isPasswordVisible,
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 10),

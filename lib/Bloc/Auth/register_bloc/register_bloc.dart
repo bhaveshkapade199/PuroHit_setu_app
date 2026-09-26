@@ -9,8 +9,7 @@ import 'package:purohitset_app/Repository/Auth/auth_repository.dart';
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final AuthRepository authRepository;
 
-  RegisterBloc(this.authRepository)
-      : super(const RegisterInitialState()) {
+  RegisterBloc(this.authRepository) : super(const RegisterInitialState()) {
     // =========================
     // Dropdown Events
     // =========================
@@ -24,9 +23,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     // WhatsApp
     // =========================
 
-    on<WhatsappSameAsPhoneChangedEvent>(
-      _onWhatsappSameAsPhoneChanged,
-    );
+    on<WhatsappSameAsPhoneChangedEvent>(_onWhatsappSameAsPhoneChanged);
 
     // =========================
     // Phone OTP
@@ -47,16 +44,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     // =========================
 
     on<RegisterUserEvent>(_onRegisterUser);
+
+    on<PasswordVisibilityEvent>(_onPasswordVisibilityChanged);
   }
 
   // =====================================================
   // Gender
   // =====================================================
 
-  void _onGenderChanged(
-    GenderChangedEvent event,
-    Emitter<RegisterState> emit,
-  ) {
+  void _onGenderChanged(GenderChangedEvent event, Emitter<RegisterState> emit) {
     debugPrint("BLOC GENDER = [${event.gender}]");
 
     emit(
@@ -194,12 +190,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     debugPrint("Sending Phone OTP...");
 
     try {
-      // TODO:
-      // Replace this with actual AuthRepository API call.
-
-      await Future.delayed(
-        const Duration(seconds: 1),
-      );
+      await Future.delayed(const Duration(seconds: 1));
 
       debugPrint("Phone OTP Sent Successfully");
 
@@ -209,8 +200,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           religion: state.religion,
           sampraday: state.sampraday,
           vedaShakha: state.vedaShakha,
-          isWhatsappSameAsPhone:
-              state.isWhatsappSameAsPhone,
+          isWhatsappSameAsPhone: state.isWhatsappSameAsPhone,
 
           phoneOtpSent: true,
           phoneVerified: false,
@@ -230,8 +220,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           religion: state.religion,
           sampraday: state.sampraday,
           vedaShakha: state.vedaShakha,
-          isWhatsappSameAsPhone:
-              state.isWhatsappSameAsPhone,
+          isWhatsappSameAsPhone: state.isWhatsappSameAsPhone,
 
           phoneOtpSent: false,
           phoneVerified: false,
@@ -251,17 +240,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     VerifyPhoneOtpEvent event,
     Emitter<RegisterState> emit,
   ) async {
-    debugPrint(
-      "VERIFY PHONE OTP = [${event.otp}]",
-    );
+    debugPrint("VERIFY PHONE OTP = [${event.otp}]");
 
     try {
-      // TODO:
-      // Replace this with actual API verification.
-
-      await Future.delayed(
-        const Duration(seconds: 1),
-      );
+      await Future.delayed(const Duration(seconds: 1));
 
       // Temporary example
       if (event.otp.length == 6) {
@@ -273,8 +255,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             religion: state.religion,
             sampraday: state.sampraday,
             vedaShakha: state.vedaShakha,
-            isWhatsappSameAsPhone:
-                state.isWhatsappSameAsPhone,
+            isWhatsappSameAsPhone: state.isWhatsappSameAsPhone,
 
             phoneOtpSent: true,
             phoneVerified: true,
@@ -295,8 +276,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           religion: state.religion,
           sampraday: state.sampraday,
           vedaShakha: state.vedaShakha,
-          isWhatsappSameAsPhone:
-              state.isWhatsappSameAsPhone,
+          isWhatsappSameAsPhone: state.isWhatsappSameAsPhone,
 
           phoneOtpSent: true,
           phoneVerified: false,
@@ -319,12 +299,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     debugPrint("Sending Email OTP...");
 
     try {
-      // TODO:
-      // Replace with actual API call.
-
-      await Future.delayed(
-        const Duration(seconds: 1),
-      );
+      await Future.delayed(const Duration(seconds: 1));
 
       debugPrint("Email OTP Sent Successfully");
 
@@ -334,8 +309,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           religion: state.religion,
           sampraday: state.sampraday,
           vedaShakha: state.vedaShakha,
-          isWhatsappSameAsPhone:
-              state.isWhatsappSameAsPhone,
+          isWhatsappSameAsPhone: state.isWhatsappSameAsPhone,
 
           phoneOtpSent: state.phoneOtpSent,
           phoneVerified: state.phoneVerified,
@@ -353,8 +327,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           religion: state.religion,
           sampraday: state.sampraday,
           vedaShakha: state.vedaShakha,
-          isWhatsappSameAsPhone:
-              state.isWhatsappSameAsPhone,
+          isWhatsappSameAsPhone: state.isWhatsappSameAsPhone,
 
           phoneOtpSent: state.phoneOtpSent,
           phoneVerified: state.phoneVerified,
@@ -374,17 +347,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     VerifyEmailOtpEvent event,
     Emitter<RegisterState> emit,
   ) async {
-    debugPrint(
-      "VERIFY EMAIL OTP = [${event.otp}]",
-    );
+    debugPrint("VERIFY EMAIL OTP = [${event.otp}]");
 
     try {
-      // TODO:
-      // Replace with actual API verification.
-
-      await Future.delayed(
-        const Duration(seconds: 1),
-      );
+      await Future.delayed(const Duration(seconds: 1));
 
       if (event.otp.length == 6) {
         debugPrint("Email OTP Verified");
@@ -395,8 +361,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             religion: state.religion,
             sampraday: state.sampraday,
             vedaShakha: state.vedaShakha,
-            isWhatsappSameAsPhone:
-                state.isWhatsappSameAsPhone,
+            isWhatsappSameAsPhone: state.isWhatsappSameAsPhone,
 
             phoneOtpSent: state.phoneOtpSent,
             phoneVerified: state.phoneVerified,
@@ -417,8 +382,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           religion: state.religion,
           sampraday: state.sampraday,
           vedaShakha: state.vedaShakha,
-          isWhatsappSameAsPhone:
-              state.isWhatsappSameAsPhone,
+          isWhatsappSameAsPhone: state.isWhatsappSameAsPhone,
 
           phoneOtpSent: state.phoneOtpSent,
           phoneVerified: state.phoneVerified,
@@ -428,6 +392,30 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         ),
       );
     }
+  }
+
+  void _onPasswordVisibilityChanged(
+    PasswordVisibilityEvent event,
+    Emitter<RegisterState> emit,
+  ) {
+    emit(
+      RegisterInitialState(
+        gender: state.gender,
+        religion: state.religion,
+        sampraday: state.sampraday,
+        vedaShakha: state.vedaShakha,
+
+        isWhatsappSameAsPhone: state.isWhatsappSameAsPhone,
+
+        phoneOtpSent: state.phoneOtpSent,
+        phoneVerified: state.phoneVerified,
+
+        emailOtpSent: state.emailOtpSent,
+        emailVerified: state.emailVerified,
+
+        isPasswordVisible: event.isVisible,
+      ),
+    );
   }
 
   // =====================================================
@@ -440,56 +428,36 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   ) async {
     final currentState = state;
 
-    debugPrint(
-      "========== REGISTER BLOC VALUES ==========",
-    );
+    debugPrint("========== REGISTER BLOC VALUES ==========");
 
-    debugPrint(
-      "Gender: ${currentState.gender}",
-    );
+    debugPrint("Gender: ${currentState.gender}");
 
-    debugPrint(
-      "Religion: ${currentState.religion}",
-    );
+    debugPrint("Religion: ${currentState.religion}");
 
-    debugPrint(
-      "Sampraday: ${currentState.sampraday}",
-    );
+    debugPrint("Sampraday: ${currentState.sampraday}");
 
-    debugPrint(
-      "Veda Shakha: ${currentState.vedaShakha}",
-    );
+    debugPrint("Veda Shakha: ${currentState.vedaShakha}");
 
-    debugPrint(
-      "Language: ${event.languagePreference}",
-    );
+    debugPrint("Language: ${event.languagePreference}");
 
-    debugPrint(
-      "Phone Verified: ${currentState.phoneVerified}",
-    );
+    debugPrint("Phone Verified: ${currentState.phoneVerified}");
 
-    debugPrint(
-      "Email Verified: ${currentState.emailVerified}",
-    );
+    debugPrint("Email Verified: ${currentState.emailVerified}");
 
-    debugPrint(
-      "==========================================",
-    );
+    debugPrint("==========================================");
 
     // Don't allow registration without verification
 
     if (!currentState.phoneVerified) {
       emit(
         RegisterErrorState(
-          errorMessage:
-              "Please verify your phone number first.",
+          errorMessage: "Please verify your phone number first.",
 
           gender: currentState.gender,
           religion: currentState.religion,
           sampraday: currentState.sampraday,
           vedaShakha: currentState.vedaShakha,
-          isWhatsappSameAsPhone:
-              currentState.isWhatsappSameAsPhone,
+          isWhatsappSameAsPhone: currentState.isWhatsappSameAsPhone,
 
           phoneOtpSent: currentState.phoneOtpSent,
           phoneVerified: currentState.phoneVerified,
@@ -505,15 +473,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     if (!currentState.emailVerified) {
       emit(
         RegisterErrorState(
-          errorMessage:
-              "Please verify your email first.",
+          errorMessage: "Please verify your email first.",
 
           gender: currentState.gender,
           religion: currentState.religion,
           sampraday: currentState.sampraday,
           vedaShakha: currentState.vedaShakha,
-          isWhatsappSameAsPhone:
-              currentState.isWhatsappSameAsPhone,
+          isWhatsappSameAsPhone: currentState.isWhatsappSameAsPhone,
 
           phoneOtpSent: currentState.phoneOtpSent,
           phoneVerified: currentState.phoneVerified,
@@ -532,8 +498,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         religion: currentState.religion,
         sampraday: currentState.sampraday,
         vedaShakha: currentState.vedaShakha,
-        isWhatsappSameAsPhone:
-            currentState.isWhatsappSameAsPhone,
+        isWhatsappSameAsPhone: currentState.isWhatsappSameAsPhone,
 
         phoneOtpSent: currentState.phoneOtpSent,
         phoneVerified: currentState.phoneVerified,
@@ -569,8 +534,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         qualification: event.qualification,
         experienceYears: event.experienceYears,
 
-        languagePreference:
-            event.languagePreference,
+        languagePreference: event.languagePreference,
       );
 
       if (response != null) {
@@ -582,71 +546,50 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             religion: currentState.religion,
             sampraday: currentState.sampraday,
             vedaShakha: currentState.vedaShakha,
-            isWhatsappSameAsPhone:
-                currentState.isWhatsappSameAsPhone,
+            isWhatsappSameAsPhone: currentState.isWhatsappSameAsPhone,
 
-            phoneOtpSent:
-                currentState.phoneOtpSent,
-            phoneVerified:
-                currentState.phoneVerified,
+            phoneOtpSent: currentState.phoneOtpSent,
+            phoneVerified: currentState.phoneVerified,
 
-            emailOtpSent:
-                currentState.emailOtpSent,
-            emailVerified:
-                currentState.emailVerified,
+            emailOtpSent: currentState.emailOtpSent,
+            emailVerified: currentState.emailVerified,
           ),
         );
       } else {
         emit(
           RegisterErrorState(
-            errorMessage:
-                "Registration failed.",
+            errorMessage: "Registration failed.",
 
             gender: currentState.gender,
             religion: currentState.religion,
             sampraday: currentState.sampraday,
             vedaShakha: currentState.vedaShakha,
-            isWhatsappSameAsPhone:
-                currentState.isWhatsappSameAsPhone,
+            isWhatsappSameAsPhone: currentState.isWhatsappSameAsPhone,
 
-            phoneOtpSent:
-                currentState.phoneOtpSent,
-            phoneVerified:
-                currentState.phoneVerified,
+            phoneOtpSent: currentState.phoneOtpSent,
+            phoneVerified: currentState.phoneVerified,
 
-            emailOtpSent:
-                currentState.emailOtpSent,
-            emailVerified:
-                currentState.emailVerified,
+            emailOtpSent: currentState.emailOtpSent,
+            emailVerified: currentState.emailVerified,
           ),
         );
       }
     } catch (e) {
       emit(
         RegisterErrorState(
-          errorMessage: e
-              .toString()
-              .replaceFirst(
-                "Exception: ",
-                "",
-              ),
+          errorMessage: e.toString().replaceFirst("Exception: ", ""),
 
           gender: currentState.gender,
           religion: currentState.religion,
           sampraday: currentState.sampraday,
           vedaShakha: currentState.vedaShakha,
-          isWhatsappSameAsPhone:
-              currentState.isWhatsappSameAsPhone,
+          isWhatsappSameAsPhone: currentState.isWhatsappSameAsPhone,
 
-          phoneOtpSent:
-              currentState.phoneOtpSent,
-          phoneVerified:
-              currentState.phoneVerified,
+          phoneOtpSent: currentState.phoneOtpSent,
+          phoneVerified: currentState.phoneVerified,
 
-          emailOtpSent:
-              currentState.emailOtpSent,
-          emailVerified:
-              currentState.emailVerified,
+          emailOtpSent: currentState.emailOtpSent,
+          emailVerified: currentState.emailVerified,
         ),
       );
     }

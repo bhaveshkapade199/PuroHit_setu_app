@@ -148,3 +148,12 @@ class VerifyEmailOtpEvent extends RegisterEvent {
   @override
   List<Object?> get props => [otp];
 }
+
+class PasswordVisibilityEvent extends RegisterEvent {
+  final bool isVisible;
+
+  const PasswordVisibilityEvent(this.isVisible);
+
+  @override
+  List<Object?> get props => [isVisible];
+}

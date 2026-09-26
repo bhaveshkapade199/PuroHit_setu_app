@@ -5,6 +5,7 @@ import 'package:purohitset_app/Bloc/Auth/login_bloc/login_bloc.dart';
 import 'package:purohitset_app/Bloc/Auth/login_bloc/login_event.dart';
 import 'package:purohitset_app/Bloc/Auth/login_bloc/login_state.dart';
 import 'package:purohitset_app/Repository/Auth/auth_repository.dart';
+import 'package:purohitset_app/Views/Auth/forget_password_screen.dart';
 import 'package:purohitset_app/Views/Auth/register_screen.dart';
 import 'package:purohitset_app/Views/Homescreen/homescreen.dart';
 import 'package:purohitset_app/Widget/common_background.dart';
@@ -289,7 +290,14 @@ class LoginScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ForgetPasswordScreen(),
+                              ),
+                            );
+                          },
                           child: const Text(
                             "Forget Password",
                             style: TextStyle(

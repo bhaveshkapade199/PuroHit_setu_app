@@ -60,8 +60,8 @@ class Homescreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
-                                height: 85,
-                                width: 85,
+                                height: 80,
+                                width: 80,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image: AssetImage(
@@ -99,26 +99,19 @@ class Homescreen extends StatelessWidget {
                                 ),
                               ),
 
-                              Card(
-                                elevation: 1,
-
-                                color: const Color(
-                                  0xFFE0AC69,
-                                ).withValues(alpha: 0.5),
-                                child: Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: const Color(
-                                      0xFFE0AC69,
-                                    ).withValues(alpha: 0.5),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      width: 0.5,
-                                      color: Colors.white,
-                                    ),
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFFE0AC69,
+                                  ).withValues(alpha: 0.5),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 0.5,
+                                    color: Colors.white,
                                   ),
-                                  child: Icon(Icons.notifications_none_outlined),
                                 ),
+                                child: Icon(Icons.notifications_none_outlined),
                               ),
                             ],
                           ),
@@ -126,6 +119,10 @@ class Homescreen extends StatelessWidget {
                       ),
                     )
                   : null,
+              // drawer: Drawer(child: Column(children: [
+
+              //         ],
+              //       )),
               body: IndexedStack(
                 index: state.currentIndex,
                 children: const [
@@ -170,10 +167,7 @@ class Homescreen extends StatelessWidget {
 
                 inactiveIcons: const [
                   _NavItem(icon: Icons.home_rounded, label: "Home"),
-                  _NavItem(
-                    icon: Icons.book_online_sharp,
-                    label: "Booking",
-                  ),
+                  _NavItem(icon: Icons.book_online_sharp, label: "Booking"),
                   _NavItem(
                     icon: Icons.mobile_screen_share_outlined,
                     label: "Reels",
