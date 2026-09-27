@@ -38,7 +38,7 @@ class LoginScreen extends StatelessWidget {
 
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const Homescreen()),
+              MaterialPageRoute(builder: (context) => Homescreen()),
             );
           }
 
@@ -111,135 +111,140 @@ class LoginScreen extends StatelessWidget {
                             horizontal: 4,
                             vertical: 8,
                           ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: Colors.white),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      context.read<LoginBloc>().add(
-                                        const LoginTypeChanged("Yajman"),
-                                      );
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    context.read<LoginBloc>().add(
+                                      const LoginTypeChanged("Yajman"),
+                                    );
 
-                                      ScaffoldMessenger.of(context)
-                                        ..hideCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            behavior: SnackBarBehavior.floating,
-                                            backgroundColor: Colors.transparent,
-                                            elevation: 0,
-                                            duration: const Duration(
-                                              seconds: 4,
-                                            ),
-                                            content: Container(
-                                              padding: const EdgeInsets.all(16),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFF1E1E1E),
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                                border: Border.all(
-                                                  color: const Color(
-                                                    0xFFFFCD42,
-                                                  ),
-                                                  width: 1.2,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: const Color(
-                                                      0xFFFFCD42,
-                                                    ).withValues(alpha: 0.25),
-                                                    blurRadius: 12,
-                                                  ),
-                                                ],
+                                    ScaffoldMessenger.of(context)
+                                      ..hideCurrentSnackBar()
+                                      ..showSnackBar(
+                                        SnackBar(
+                                          behavior: SnackBarBehavior.floating,
+                                          backgroundColor: Colors.transparent,
+                                          elevation: 0,
+                                          duration: const Duration(seconds: 4),
+                                          content: Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF1E1E1E),
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              border: Border.all(
+                                                color: const Color(0xFFFFCD42),
+                                                width: 1.2,
                                               ),
-                                              child: const Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.temple_hindu,
-                                                    color: Color(0xFFFFCD42),
-                                                    size: 28,
-                                                  ),
-                                                  SizedBox(width: 12),
-                                                  Expanded(
-                                                    child: Text(
-                                                      "Yajman services are coming soon. We're preparing a better experience for you!",
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: const Color.fromARGB(
+                                                    255,
+                                                    250,
+                                                    250,
+                                                    250,
+                                                  ).withValues(alpha: 0.25),
+                                                  blurRadius: 12,
+                                                ),
+                                              ],
+                                            ),
+                                            child: const Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.temple_hindu,
+                                                  color: Color(0xFFFFCD42),
+                                                  size: 28,
+                                                ),
+                                                SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Text(
+                                                    "Yajman services are coming soon. We're preparing a better experience for you!",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        );
-                                    },
-                                    child: Container(
-                                      height: 40,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: selectedType == "Yajman"
-                                            ? const Color(0xFFFFCD42)
-                                            : const Color(
-                                                0xFFFFCD42,
-                                              ).withValues(alpha: 0.15),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Yajman",
-                                          style: TextStyle(
-                                            color: selectedType == "Yajman"
-                                                ? Colors.black87
-                                                : Colors.white,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      context.read<LoginBloc>().add(
-                                        const LoginTypeChanged("Guruji"),
                                       );
-                                    },
-                                    child: Container(
-                                      height: 40,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: selectedType == "Guruji"
-                                            ? const Color(0xFFFFCD42)
-                                            : const Color(
-                                                0xFFFFCD42,
-                                              ).withValues(alpha: 0.15),
+                                  },
+                                  child: Container(
+                                    height: 44,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(22),
+                                      border: Border.all(
+                                        width: 1,
+                                        color: Colors.white,
                                       ),
-                                      child: Center(
-                                        child: Text(
-                                          "Guruji",
-                                          style: TextStyle(
-                                            color: selectedType == "Guruji"
-                                                ? Colors.black87
-                                                : Colors.white,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                      color: selectedType == "Yajman"
+                                          ? const Color(0xFFFFCD42)
+                                          : const Color(
+                                              0xFFFFCD42,
+                                            ).withValues(alpha: 0.15),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Yajman",
+                                        style: TextStyle(
+                                          color: selectedType == "Yajman"
+                                              ? Colors.black87
+                                              : Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    context.read<LoginBloc>().add(
+                                      const LoginTypeChanged("Guruji"),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: 44,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(22),
+                                      border: Border.all(
+                                        width: 1,
+                                        color: Colors.white,
+                                      ),
+                                      color: selectedType == "Guruji"
+                                          ? const Color(0xFFFFCD42)
+                                          : const Color(
+                                              0xFFFFCD42,
+                                            ).withValues(alpha: 0.15),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Guruji",
+                                        style: TextStyle(
+                                          color: selectedType == "Guruji"
+                                              ? Colors.black87
+                                              : Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
@@ -338,7 +343,7 @@ class LoginScreen extends StatelessWidget {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const Homescreen(),
+                                builder: (context) => Homescreen(),
                               ),
                             );
                             // final phone = userNameController.text.trim();

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:purohitset_app/Model/Auth/guruji_login_model.dart';
 import 'package:purohitset_app/Model/Auth/guruji_register_model.dart';
 import 'package:purohitset_app/Constant/api_endpoint.dart';
+import 'package:purohitset_app/Model/Auth/send_OTP_model.dart';
 
 class AuthRepository {
   final Dio dio = Dio();
@@ -141,6 +142,108 @@ class AuthRepository {
       rethrow;
     } catch (e) {
       debugPrint('Unexpected Login Error: $e');
+      rethrow;
+    }
+  }
+
+  // Create the function for sending OTP (phone or email)
+  Future<SendOTPModel?> sendOTP(String channel, String destination) async {
+    final sendOtpApi = ApiEndpoint().hostUrl + ApiEndpoint().sendOTP;
+
+    debugPrint("Send OTP Api is : $sendOtpApi");
+
+    try {
+      final response = await dio.post(
+        sendOtpApi,
+        data: {
+          "channel": channel,
+          "destination": destination,
+          "purpose": "guruji_registration",
+        },
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+        ),
+      );
+
+      debugPrint("Send OTP Response Code: ${response.statusCode}");
+      debugPrint("Send OTP Response: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return SendOTPModel.fromJson(response.data);
+      }
+
+      throw Exception('OTP failed with status code: ${response.statusCode}');
+    } on DioException catch (e) {
+      debugPrint('Dio Error Type: ${e.type}');
+      debugPrint('Dio Error Message: ${e.message}');
+      debugPrint('Status Code: ${e.response?.statusCode}');
+      debugPrint('Response: ${e.response?.data}');
+
+      final responseData = e.response?.data;
+      if (responseData is Map && responseData["message"] != null) {
+        throw Exception(responseData["message"].toString());
+      }
+      throw Exception(e.message ?? 'Failed to send OTP');
+    } catch (e) {
+      debugPrint('Unexpected OTP Send Error: $e');
+      rethrow;
+    }
+  }
+
+  // Create the function for verifying OTP (phone or email)
+  Future<bool> verifyOTP({
+    required String channel,
+    required String destination,
+    required String verificationUid,
+    required String otp,
+  }) async {
+    final verifyOtpApi = ApiEndpoint().hostUrl + ApiEndpoint().verifyOTP;
+
+    debugPrint("Verify OTP Api: $verifyOtpApi");
+
+    try {
+      final response = await dio.post(
+        verifyOtpApi,
+        data: {
+          "channel": channel,
+          "destination": destination,
+          "verification_uid": verificationUid,
+          "otp": otp,
+        },
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+        ),
+      );
+
+      debugPrint("Verify OTP Response Code: ${response.statusCode}");
+      debugPrint("Verify OTP Response: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data is Map && response.data["success"] == true) {
+          return true;
+        }
+      }
+
+      return false;
+    } on DioException catch (e) {
+      debugPrint('Dio Error Type: ${e.type}');
+      debugPrint('Dio Error Message: ${e.message}');
+      debugPrint('Status Code: ${e.response?.statusCode}');
+      debugPrint('Response: ${e.response?.data}');
+
+      final responseData = e.response?.data;
+      if (responseData is Map && responseData["message"] != null) {
+        throw Exception(responseData["message"].toString());
+      }
+      throw Exception(e.message ?? 'Failed to verify OTP');
+    } catch (e) {
+      debugPrint('Unexpected OTP Verify Error: $e');
       rethrow;
     }
   }

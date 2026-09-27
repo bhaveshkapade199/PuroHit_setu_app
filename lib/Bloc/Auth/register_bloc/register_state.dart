@@ -51,6 +51,7 @@ abstract class RegisterState extends Equatable {
 
     emailOtpSent,
     emailVerified,
+    isPasswordVisible,
   ];
 }
 
@@ -71,7 +72,7 @@ class RegisterInitialState extends RegisterState {
 
     super.emailOtpSent,
     super.emailVerified,
-    super.isPasswordVisible
+    super.isPasswordVisible,
   });
 }
 
@@ -92,6 +93,7 @@ class RegisterLoadingState extends RegisterState {
 
     super.emailOtpSent,
     super.emailVerified,
+    super.isPasswordVisible,
   });
 }
 
@@ -116,6 +118,7 @@ class RegisterLoadedState extends RegisterState {
 
     super.emailOtpSent,
     super.emailVerified,
+    super.isPasswordVisible,
   });
 
   @override
@@ -132,6 +135,7 @@ class RegisterLoadedState extends RegisterState {
 
     emailOtpSent,
     emailVerified,
+    isPasswordVisible,
   ];
 }
 

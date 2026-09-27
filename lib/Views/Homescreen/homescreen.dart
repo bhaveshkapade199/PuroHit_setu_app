@@ -11,7 +11,10 @@ import 'package:purohitset_app/Views/BottomNavigationBar/profile_screen.dart';
 import 'package:purohitset_app/Views/BottomNavigationBar/reels_screen.dart';
 
 class Homescreen extends StatelessWidget {
-  const Homescreen({super.key});
+  Homescreen({super.key});
+
+  // Scaffold key
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +24,7 @@ class Homescreen extends StatelessWidget {
           canPop: state.currentIndex == 0,
           onPopInvokedWithResult: (didPop, result) {
             if (didPop) return;
+
             if (state.currentIndex != 0) {
               context.read<BottomNavigationBloc>().add(
                 const BottomNavigationTabChanged(0),
@@ -33,11 +37,17 @@ class Homescreen extends StatelessWidget {
             right: false,
             bottom: true,
             child: Scaffold(
+              // Attach key to Scaffold
+              key: scaffoldKey,
+
               backgroundColor: const Color(0xFFFFF5EA),
 
+              // ------------------------------------------------
+              // APP BAR
+              // ------------------------------------------------
               appBar: state.currentIndex == 0
                   ? PreferredSize(
-                      preferredSize: const Size(double.infinity, 55),
+                      preferredSize: const Size(double.infinity, 65),
                       child: Container(
                         decoration: BoxDecoration(
                           color: const Color(0xFFFFD3A1).withValues(alpha: 0.8),
@@ -59,9 +69,12 @@ class Homescreen extends StatelessWidget {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              // ------------------------------------------------
+                              // DRAWER MENU BUTTON
+                              // ------------------------------------------------
                               Container(
                                 height: 80,
-                                width: 80,
+                                width: 70,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image: AssetImage(
@@ -72,6 +85,9 @@ class Homescreen extends StatelessWidget {
                                 ),
                               ),
 
+                              // ------------------------------------------------
+                              // LOCATION
+                              // ------------------------------------------------
                               Expanded(
                                 child: Row(
                                   children: [
@@ -81,17 +97,18 @@ class Homescreen extends StatelessWidget {
                                       size: 24,
                                     ),
 
-                                    const SizedBox(width: 2),
-
                                     const Expanded(
-                                      child: Text(
-                                        "Pune, Maharashtra, India",
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
+                                      child: SizedBox(
+                                        width: 80,
+                                        child: Text(
+                                          "Pune, Maharashtra",
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -99,8 +116,11 @@ class Homescreen extends StatelessWidget {
                                 ),
                               ),
 
+                              // ------------------------------------------------
+                              // NOTIFICATION
+                              // ------------------------------------------------
                               Container(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: const Color(
                                     0xFFE0AC69,
@@ -111,7 +131,20 @@ class Homescreen extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                 ),
-                                child: Icon(Icons.notifications_none_outlined),
+                                child: const Icon(
+                                  Icons.notifications_none_outlined,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  scaffoldKey.currentState?.openDrawer();
+                                },
+                                icon: const Icon(
+                                  Icons.menu,
+                                  color: Colors.black,
+                                  size: 28,
+                                ),
                               ),
                             ],
                           ),
@@ -119,10 +152,193 @@ class Homescreen extends StatelessWidget {
                       ),
                     )
                   : null,
-              // drawer: Drawer(child: Column(children: [
 
-              //         ],
-              //       )),
+              drawer: Drawer(
+                width: 320,
+
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    DrawerHeader(
+                      margin: EdgeInsets.zero,
+                      padding: const EdgeInsets.all(20),
+                      decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 235, 156, 10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 65,
+                                width: 65,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                padding: const EdgeInsets.all(5),
+                                child: Image.asset(
+                                  'Assets/Images/purohit-setu-logo.webp',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              const Text(
+                                "Purohitsetu",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              Icons.close,
+                              size: 28,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ListTile(
+                          leading: const Icon(
+                            Icons.home_rounded,
+                            color: Color(0xFFEB4A0A),
+                          ),
+                          title: const Text(
+                            "Home",
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+
+                            context.read<BottomNavigationBloc>().add(
+                              const BottomNavigationTabChanged(0),
+                            );
+                          },
+                        ),
+
+                        // ------------------------------------------------
+                        // PROFILE
+                        // ------------------------------------------------
+                        ListTile(
+                          leading: const Icon(
+                            Icons.person_rounded,
+                            color: Color(0xFFEB4A0A),
+                          ),
+                          title: const Text(
+                            "Profile",
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+
+                            context.read<BottomNavigationBloc>().add(
+                              const BottomNavigationTabChanged(4),
+                            );
+                          },
+                        ),
+
+                        // ------------------------------------------------
+                        // SETTINGS
+                        // ------------------------------------------------
+                        ListTile(
+                          leading: const Icon(
+                            Icons.settings_rounded,
+                            color: Color(0xFFEB4A0A),
+                          ),
+                          title: const Text(
+                            "Settings",
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+
+                            // Navigate to Settings screen here
+                          },
+                        ),
+
+                        // ------------------------------------------------
+                        // ABOUT
+                        // ------------------------------------------------
+                        ListTile(
+                          leading: const Icon(
+                            Icons.info_outline_rounded,
+                            color: Color(0xFFEB4A0A),
+                          ),
+                          title: const Text(
+                            "About Us",
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+
+                            // Navigate to About screen here
+                          },
+                        ),
+
+                        // ------------------------------------------------
+                        // HELP
+                        // ------------------------------------------------
+                        ListTile(
+                          leading: const Icon(
+                            Icons.help_outline_rounded,
+                            color: Color(0xFFEB4A0A),
+                          ),
+                          title: const Text(
+                            "Help & Support",
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+
+                            // Navigate to Help screen here
+                          },
+                        ),
+                        const Divider(),
+
+                        ListTile(
+                          leading: const Icon(
+                            Icons.logout_rounded,
+                            color: Colors.red,
+                          ),
+                          title: const Text(
+                            "Logout",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+
+                            // Logout functionality
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // ------------------------------------------------
+              // BODY
+              // ------------------------------------------------
               body: IndexedStack(
                 index: state.currentIndex,
                 children: const [
@@ -134,6 +350,9 @@ class Homescreen extends StatelessWidget {
                 ],
               ),
 
+              // ------------------------------------------------
+              // BOTTOM NAVIGATION
+              // ------------------------------------------------
               bottomNavigationBar: CircleNavBar(
                 activeIndex: state.currentIndex,
 
@@ -143,21 +362,25 @@ class Homescreen extends StatelessWidget {
                     label: "Home",
                     isActive: true,
                   ),
+
                   _NavItem(
                     icon: Icons.book_online_sharp,
                     label: "Booking",
                     isActive: true,
                   ),
+
                   _NavItem(
                     icon: Icons.mobile_screen_share_outlined,
                     label: "Reels",
                     isActive: true,
                   ),
+
                   _NavItem(
                     icon: Icons.chat_bubble_rounded,
                     label: "Chat",
                     isActive: true,
                   ),
+
                   _NavItem(
                     icon: Icons.person_rounded,
                     label: "Profile",
@@ -167,33 +390,36 @@ class Homescreen extends StatelessWidget {
 
                 inactiveIcons: const [
                   _NavItem(icon: Icons.home_rounded, label: "Home"),
+
                   _NavItem(icon: Icons.book_online_sharp, label: "Booking"),
+
                   _NavItem(
                     icon: Icons.mobile_screen_share_outlined,
                     label: "Reels",
                   ),
+
                   _NavItem(
                     icon: Icons.chat_bubble_outline_outlined,
                     label: "Chat",
                   ),
+
                   _NavItem(icon: Icons.person_rounded, label: "Profile"),
                 ],
 
                 color: Colors.black,
+
                 circleColor: Colors.white,
-                height: 70,
+
+                height: 65,
+
                 circleWidth: 60,
 
                 cornerRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
-                  bottomLeft: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
                 ),
-
-                shadowColor: Colors.black26,
-                circleShadowColor: const Color(0xFFE5A900),
-                elevation: 10,
 
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -228,229 +454,26 @@ class Homescreen extends StatelessWidget {
   }
 }
 
+// ================================================================
+// HOME TAB
+// ================================================================
+
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Home',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
+    return const SizedBox(
+      height: double.infinity,
+      width: double.infinity,
+      child: Column(children: []),
     );
   }
 }
-// class Homescreen extends StatelessWidget {
-//   const Homescreen({super.key});
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
-//       builder: (context, state) {
-//         return SafeArea(
-//           child: Scaffold(
-//             backgroundColor: const Color.fromARGB(
-//               255,
-//               255,
-//               239,
-//               221,
-//             ).withValues(alpha: 0.2),
-
-//             appBar: PreferredSize(
-//               preferredSize: const Size(double.infinity, 70),
-// child: Container(
-//   decoration: BoxDecoration(
-//     color: const Color(0xFFFFD3A1).withValues(alpha: 0.8),
-//     boxShadow: const [
-//       BoxShadow(
-//         color: Colors.black26,
-//         blurRadius: 8,
-//         spreadRadius: 1,
-//         offset: Offset(0, 3),
-//       ),
-//     ],
-//   ),
-//   child: Padding(
-//     padding: const EdgeInsets.only(left: 3, right: 8),
-//     child: Row(
-//       crossAxisAlignment: CrossAxisAlignment.center,
-//       children: [
-//         Container(
-//           height: 80,
-//           width: 80,
-//           decoration: const BoxDecoration(
-//             image: DecorationImage(
-//               image: AssetImage(
-//                 'Assets/Images/purohit-setu-logo.webp',
-//               ),
-//               fit: BoxFit.cover,
-//             ),
-//           ),
-//         ),
-
-//         Expanded(
-//           child: Row(
-//             children: [
-//               const Icon(
-//                 Icons.location_on,
-//                 color: Color(0xFFEB4A0A),
-//                 size: 24,
-//               ),
-
-//               const SizedBox(width: 5),
-
-//               const Expanded(
-//                 child: Text(
-//                   "Pune, Maharashtra, India",
-//                   maxLines: 2,
-//                   overflow: TextOverflow.ellipsis,
-//                   style: TextStyle(
-//                     color: Colors.black,
-//                     fontSize: 14,
-//                     fontWeight: FontWeight.w700,
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-
-//         Container(
-//           decoration: BoxDecoration(
-//             color: const Color(0xFFE0AC69).withValues(alpha: 0.5),
-//             shape: BoxShape.circle,
-//             border: Border.all(width: 0.5, color: Colors.white),
-//           ),
-//           child: IconButton(
-//             onPressed: () {},
-//             icon: const Icon(Icons.notifications_none_sharp),
-//           ),
-//         ),
-//       ],
-//     ),
-//   ),
-// ),
-// ),
-
-//             body: _buildScreen(state.currentIndex),
-
-//             bottomNavigationBar: CircleNavBar(
-//               activeIndex: state.currentIndex,
-
-//               activeIcons: const [
-//                 _NavItem(
-//                   icon: Icons.home_rounded,
-//                   label: "Home",
-//                   isActive: true,
-//                 ),
-//                 _NavItem(
-//                   icon: Icons.info_rounded,
-//                   label: "About",
-//                   isActive: true,
-//                 ),
-//                 _NavItem(
-//                   icon: Icons.calendar_month_rounded,
-//                   label: "Booking",
-//                   isActive: true,
-//                 ),
-//                 _NavItem(
-//                   icon: Icons.chat_bubble_rounded,
-//                   label: "Chat",
-//                   isActive: true,
-//                 ),
-//                 _NavItem(
-//                   icon: Icons.person_rounded,
-//                   label: "Profile",
-//                   isActive: true,
-//                 ),
-//               ],
-
-//               inactiveIcons: const [
-//                 _NavItem(icon: Icons.home_rounded, label: "Home"),
-//                 _NavItem(icon: Icons.info_rounded, label: "About"),
-//                 _NavItem(icon: Icons.calendar_month_rounded, label: "Booking"),
-//                 _NavItem(
-//                   icon: Icons.chat_bubble_outline_outlined,
-//                   label: "Chat",
-//                 ),
-//                 _NavItem(icon: Icons.person_rounded, label: "Profile"),
-//               ],
-
-//               color: Colors.black,
-
-//               circleColor: Colors.white,
-
-//               height: 70,
-
-//               // circleWidth MUST be <= height
-//               circleWidth: 60,
-
-//               cornerRadius: const BorderRadius.only(
-//                 topLeft: Radius.circular(8),
-//                 topRight: Radius.circular(8),
-//                 bottomLeft: Radius.circular(8),
-//                 bottomRight: Radius.circular(8),
-//               ),
-
-//               shadowColor: Colors.black26,
-//               circleShadowColor: const Color(0xFFE5A900),
-
-//               elevation: 10,
-
-//               gradient: LinearGradient(
-//                 begin: Alignment.topCenter,
-//                 end: Alignment.bottomCenter,
-//                 colors: [
-//                   Color(0xFFFFD3A1).withValues(alpha: 0.8),
-//                   const Color(0xFFFFD3A1).withValues(alpha: 0.8),
-//                 ],
-//               ),
-
-//               circleGradient: LinearGradient(
-//                 begin: Alignment.topLeft,
-//                 end: Alignment.bottomRight,
-//                 colors: [
-//                   Color.fromARGB(255, 179, 92, 45),
-//                   Color(0xFFEB4A0A),
-//                   Color(0xFFC73700),
-//                 ],
-//               ),
-
-//               onTap: (index) {
-//                 context.read<BottomNavigationBloc>().add(
-//                   BottomNavigationTabChanged(index),
-//                 );
-//               },
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-
-//   Widget _buildScreen(int index) {
-//     switch (index) {
-//       case 0:
-//         return const Homescreen();
-
-//       case 1:
-//         return const ReelsScreen();
-
-//       case 2:
-//         return const BookingHistoryScreen();
-
-//       case 3:
-//         return const ChattingScreen();
-
-//       case 4:
-//         return const ProfileScreen();
-
-//       default:
-//         return const Homescreen();
-//     }
-//   }
-// }
+// ================================================================
+// BOTTOM NAVIGATION ITEM
+// ================================================================
 
 class _NavItem extends StatelessWidget {
   final IconData icon;
@@ -468,11 +491,7 @@ class _NavItem extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          icon,
-          size: 25,
-          color: isActive ? const Color.fromARGB(255, 0, 0, 0) : Colors.black54,
-        ),
+        Icon(icon, size: 25, color: isActive ? Colors.black : Colors.black54),
 
         const SizedBox(height: 2),
 
@@ -483,7 +502,7 @@ class _NavItem extends StatelessWidget {
           style: TextStyle(
             fontSize: 10,
             fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-            color: isActive ? Colors.black87 : Colors.black87,
+            color: Colors.black87,
           ),
         ),
       ],

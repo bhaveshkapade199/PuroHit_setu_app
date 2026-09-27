@@ -118,35 +118,41 @@ class WhatsappSameAsPhoneChangedEvent extends RegisterEvent {
 }
 
 class SendPhoneOtpEvent extends RegisterEvent {
-  const SendPhoneOtpEvent();
+  final String phone;
+
+  const SendPhoneOtpEvent([this.phone = ""]);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [phone];
 }
 
 class VerifyPhoneOtpEvent extends RegisterEvent {
   final String otp;
+  final String phone;
 
-  const VerifyPhoneOtpEvent(this.otp);
+  const VerifyPhoneOtpEvent(this.otp, [this.phone = ""]);
 
   @override
-  List<Object?> get props => [otp];
+  List<Object?> get props => [otp, phone];
 }
 
 class SendEmailOtpEvent extends RegisterEvent {
-  const SendEmailOtpEvent();
+  final String email;
+
+  const SendEmailOtpEvent([this.email = ""]);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [email];
 }
 
 class VerifyEmailOtpEvent extends RegisterEvent {
   final String otp;
+  final String email;
 
-  const VerifyEmailOtpEvent(this.otp);
+  const VerifyEmailOtpEvent(this.otp, [this.email = ""]);
 
   @override
-  List<Object?> get props => [otp];
+  List<Object?> get props => [otp, email];
 }
 
 class PasswordVisibilityEvent extends RegisterEvent {

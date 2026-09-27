@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:multi_dropdown/multi_dropdown.dart';
+
 import 'package:pinput/pinput.dart';
 
 import 'package:purohitset_app/Bloc/Auth/register_bloc/register_bloc.dart';
@@ -16,9 +16,7 @@ class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
 
   // Text controllers
-  final firstNameController = TextEditingController();
-  final middleNameController = TextEditingController();
-  final lastNameController = TextEditingController();
+  final fullnameController = TextEditingController();
   final dobController = TextEditingController();
   final phoneController = TextEditingController();
   final alternatePhoneController = TextEditingController();
@@ -85,8 +83,8 @@ class RegisterScreen extends StatelessWidget {
 
                     // First Name
                     FormTextField(
-                      controller: firstNameController,
-                      label: "Enter First Name",
+                      controller: fullnameController,
+                      label: "Enter Full Name",
                       prefixIcon: const Icon(Icons.person, color: Colors.white),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -95,44 +93,6 @@ class RegisterScreen extends StatelessWidget {
                         return null;
                       },
                     ),
-
-                    const SizedBox(height: 10),
-
-                    // Middle Name
-                    FormTextField(
-                      controller: middleNameController,
-                      label: "Enter Middle Name",
-                      prefixIcon: const Icon(
-                        Icons.person_outline,
-                        color: Colors.white,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return "Middle name is required";
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // Last Name
-                    FormTextField(
-                      controller: lastNameController,
-                      label: "Enter Last Name",
-                      prefixIcon: const Icon(
-                        Icons.person_outline,
-                        color: Colors.white,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return "Last name is required";
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 10),
 
                     // Gender
                     _buildDropdown(
@@ -192,9 +152,36 @@ class RegisterScreen extends StatelessWidget {
                                     onPressed: state.phoneVerified
                                         ? null
                                         : () async {
+                                            final phone =
+                                                phoneController.text.trim();
+                                            if (phone.isEmpty) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    "Please enter phone number first",
+                                                  ),
+                                                ),
+                                              );
+                                              return;
+                                            }
+                                            if (phone.length < 10) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    "Please enter a valid 10-digit phone number",
+                                                  ),
+                                                ),
+                                              );
+                                              return;
+                                            }
+
                                             // First send OTP
                                             context.read<RegisterBloc>().add(
-                                              const SendPhoneOtpEvent(),
+                                              SendPhoneOtpEvent(phone),
                                             );
 
                                             // Open OTP bottom sheet
@@ -244,7 +231,7 @@ class RegisterScreen extends StatelessWidget {
 
                           children: [
                             const Text(
-                              "Same as phone number",
+                              "Same as whattsApp number",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
@@ -285,19 +272,6 @@ class RegisterScreen extends StatelessWidget {
 
                     const SizedBox(height: 10),
 
-                    // Alternate Phone
-                    FormTextField(
-                      controller: alternatePhoneController,
-                      label: "Enter Alternate Phone Number",
-                      prefixIcon: const Icon(
-                        Icons.phone_android,
-                        color: Colors.white,
-                      ),
-                      keyboardType: TextInputType.phone,
-                    ),
-
-                    const SizedBox(height: 10),
-
                     // WhatsApp
                     BlocBuilder<RegisterBloc, RegisterState>(
                       builder: (context, state) {
@@ -322,126 +296,120 @@ class RegisterScreen extends StatelessWidget {
                       },
                     ),
 
-                    const SizedBox(height: 10),
-
                     // Email
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: FormTextField(
-                            controller: emailController,
-                            label: "Enter Your Email",
-                            prefixIcon: const Icon(
-                              Icons.email,
-                              color: Colors.white,
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return "Email is required";
-                              }
-
-                              if (!RegExp(
-                                r'^[^@]+@[^@]+\.[^@]+',
-                              ).hasMatch(value.trim())) {
-                                return "Enter a valid email";
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        SizedBox(
-                          width: 80,
-                          height: 42,
-                          child: FamoElevatedButton(
-                            text: "OTP",
-                            onPressed: () {},
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // Password
                     BlocBuilder<RegisterBloc, RegisterState>(
                       builder: (context, state) {
-                        return FormTextField(
-                          controller: passwordController,
+                        return Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: FormTextField(
+                                    controller: emailController,
+                                    label: "Enter Your Email",
+                                    prefixIcon: const Icon(
+                                      Icons.email,
+                                      color: Colors.white,
+                                    ),
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: (value) {
+                                      if (value == null ||
+                                          value.trim().isEmpty) {
+                                        return "Email is required";
+                                      }
 
-                          label: "Enter Password",
-                          prefixIcon: const Icon(
-                            Icons.lock,
-                            color: Colors.white,
-                          ),
-                          obscureText: !state.isPasswordVisible,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              state.isPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              context.read<RegisterBloc>().add(
-                                PasswordVisibilityEvent(
-                                  !state.isPasswordVisible,
+                                      if (!RegExp(
+                                        r'^[^@]+@[^@]+\.[^@]+',
+                                      ).hasMatch(value.trim())) {
+                                        return "Enter a valid email";
+                                      }
+
+                                      return null;
+                                    },
+                                  ),
                                 ),
-                              );
-                            },
-                          ),
+                                const SizedBox(width: 8),
+                                SizedBox(
+                                  width: 80,
+                                  height: 42,
+                                  child: FamoElevatedButton(
+                                    text: state.emailVerified ? "✓" : "OTP",
+                                    onPressed: state.emailVerified
+                                        ? null
+                                        : () async {
+                                            final email =
+                                                emailController.text.trim();
+                                            if (email.isEmpty) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    "Please enter email first",
+                                                  ),
+                                                ),
+                                              );
+                                              return;
+                                            }
+                                            if (!RegExp(
+                                              r'^[^@]+@[^@]+\.[^@]+',
+                                            ).hasMatch(email)) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    "Please enter a valid email",
+                                                  ),
+                                                ),
+                                              );
+                                              return;
+                                            }
+
+                                            // First send OTP
+                                            context.read<RegisterBloc>().add(
+                                              SendEmailOtpEvent(email),
+                                            );
+
+                                            // Open OTP bottom sheet
+                                            await _showEmailOtpBottomSheet(
+                                              context,
+                                            );
+                                          },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (state.emailVerified)
+                              const Align(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.verified,
+                                        color: Colors.greenAccent,
+                                        size: 18,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "Email Verified",
+                                        style: TextStyle(
+                                          color: Colors.greenAccent,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
                         );
                       },
                     ),
-                    const SizedBox(height: 10),
-
-                    // Confirm Password
-                    BlocBuilder<RegisterBloc, RegisterState>(
-                      builder: (context, state) {
-                        return FormTextField(
-                          controller: confirmPasswordController,
-                          label: "Enter Confirm Password",
-                          prefixIcon: const Icon(
-                            Icons.lock,
-                            color: Colors.white,
-                          ),
-                          obscureText: !state.isPasswordVisible,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              state.isPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              context.read<RegisterBloc>().add(
-                                PasswordVisibilityEvent(
-                                  !state.isPasswordVisible,
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // Bio
-                    FormTextField(
-                      controller: bioController,
-                      label: "Enter Your Bio",
-                      prefixIcon: const Icon(
-                        Icons.description,
-                        color: Colors.white,
-                      ),
-                      maxLines: 4,
-                    ),
-
-                    const SizedBox(height: 10),
 
                     // Religion
                     _buildDropdown(
@@ -501,97 +469,69 @@ class RegisterScreen extends StatelessWidget {
                       },
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
+                    // Password
+                    BlocBuilder<RegisterBloc, RegisterState>(
+                      builder: (context, state) {
+                        return FormTextField(
+                          controller: passwordController,
 
-                    // Qualification
-                    FormTextField(
-                      controller: qualificationController,
-                      label: "Enter Qualification",
-                      prefixIcon: const Icon(Icons.school, color: Colors.white),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // Experience
-                    FormTextField(
-                      controller: experienceController,
-                      label: "Experience in Years",
-                      prefixIcon: const Icon(
-                        Icons.work_history,
-                        color: Colors.white,
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // Language
-                    // FormTextField(
-                    //   controller: languagePreferenceController,
-                    //   label: "Language Preference",
-                    //   prefixIcon: const Icon(
-                    //     Icons.language,
-                    //     color: Colors.white,
-                    //   ),
-                    // ),
-                    MultiDropdown<String>(
-                      items: [
-                        DropdownItem(label: 'Marathi', value: 'mr'),
-                        DropdownItem(label: 'Hindi', value: 'hi'),
-                        DropdownItem(label: 'Sanskrit', value: 'sa'),
-                        DropdownItem(label: 'English', value: 'en'),
-                        DropdownItem(label: 'Gujarati', value: 'gu'),
-                      ],
-
-                      fieldDecoration: FieldDecoration(
-                        labelText: 'Language Preference',
-                        labelStyle: const TextStyle(color: Colors.amberAccent),
-                        hintStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.language,
-                          color: Colors.white,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFFFE0BD),
+                          label: "Enter Password",
+                          prefixIcon: const Icon(
+                            Icons.lock,
+                            color: Colors.white,
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFFFD700),
+                          obscureText: !state.isPasswordVisible,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              state.isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              context.read<RegisterBloc>().add(
+                                PasswordVisibilityEvent(
+                                  !state.isPasswordVisible,
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                      ),
-
-                      dropdownDecoration: DropdownDecoration(
-                        backgroundColor: Colors.white.withValues(alpha: 0.9),
-                      ),
-
-                      chipDecoration: const ChipDecoration(
-                        backgroundColor: Color(0xFFD8AF49),
-                        labelStyle: TextStyle(color: Colors.white),
-                      ),
-
-                      onSelectionChange: (selectedItems) {
-                        if (selectedItems.isNotEmpty) {
-                          languagePreferenceController.text = selectedItems
-                              .join(',');
-                        } else {
-                          languagePreferenceController.clear();
-                        }
-
-                        debugPrint(
-                          "Selected Languages: ${languagePreferenceController.text}",
                         );
                       },
                     ),
 
-                    const SizedBox(height: 25),
+                    // Confirm Password
+                    BlocBuilder<RegisterBloc, RegisterState>(
+                      builder: (context, state) {
+                        return FormTextField(
+                          controller: confirmPasswordController,
+                          label: "Enter Confirm Password",
+                          prefixIcon: const Icon(
+                            Icons.lock,
+                            color: Colors.white,
+                          ),
+                          obscureText: !state.isPasswordVisible,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              state.isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              context.read<RegisterBloc>().add(
+                                PasswordVisibilityEvent(
+                                  !state.isPasswordVisible,
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 10),
 
                     FamoElevatedButton(
                       text: "Register",
@@ -600,7 +540,7 @@ class RegisterScreen extends StatelessWidget {
                       },
                     ),
 
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -612,6 +552,10 @@ class RegisterScreen extends StatelessWidget {
   }
 
   void _registerUser(BuildContext context) {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(
         context,
@@ -619,7 +563,28 @@ class RegisterScreen extends StatelessWidget {
       return;
     }
 
+    // =========================
+    // Split Full Name
+    // =========================
+
+    final name = _splitFullName(fullnameController.text);
+
+    final firstName = name['firstName'] ?? '';
+    final middleName = name['middleName'] ?? '';
+    final lastName = name['lastName'] ?? '';
+
+    // =========================
+    // Current BLoC State
+    // =========================
+
     final state = context.read<RegisterBloc>().state;
+
+    // Debug
+    debugPrint("========== NAME VALUES ==========");
+    debugPrint("Full Name: ${fullnameController.text}");
+    debugPrint("First Name: $firstName");
+    debugPrint("Middle Name: $middleName");
+    debugPrint("Last Name: $lastName");
 
     debugPrint("========== SELECTED VALUES ==========");
     debugPrint("Gender: ${state.gender}");
@@ -629,13 +594,16 @@ class RegisterScreen extends StatelessWidget {
     debugPrint("Language: ${languagePreferenceController.text}");
     debugPrint("======================================");
 
+    // =========================
+    // Send Event
+    // =========================
+
     context.read<RegisterBloc>().add(
       RegisterUserEvent(
-        firstName: firstNameController.text.trim(),
-        middleName: middleNameController.text.trim(),
-        lastName: lastNameController.text.trim(),
+        firstName: firstName,
+        middleName: middleName,
+        lastName: lastName,
 
-        // IMPORTANT
         gender: state.gender,
         religion: state.religion,
         sampraday: state.sampraday,
@@ -649,7 +617,9 @@ class RegisterScreen extends StatelessWidget {
         password: passwordController.text,
         bio: bioController.text.trim(),
         qualification: qualificationController.text.trim(),
+
         experienceYears: int.tryParse(experienceController.text.trim()) ?? 0,
+
         languagePreference: languagePreferenceController.text.trim(),
       ),
     );
@@ -732,6 +702,24 @@ class RegisterScreen extends StatelessWidget {
     final lastTwoDigits = number.substring(number.length - 2);
 
     return "xxxxxx$lastTwoDigits";
+  }
+
+  Map<String, String> _splitFullName(String fullName) {
+    final parts = fullName.trim().split(RegExp(r'\s+'));
+
+    if (parts.length == 1) {
+      return {'firstName': parts[0], 'middleName': '', 'lastName': ''};
+    }
+
+    if (parts.length == 2) {
+      return {'firstName': parts[0], 'middleName': '', 'lastName': parts[1]};
+    }
+
+    return {
+      'firstName': parts.first,
+      'middleName': parts.sublist(1, parts.length - 1).join(' '),
+      'lastName': parts.last,
+    };
   }
 
   Future<void> _showPhoneOtpBottomSheet(BuildContext context) async {
@@ -868,7 +856,10 @@ class RegisterScreen extends StatelessWidget {
                           }
 
                           context.read<RegisterBloc>().add(
-                            VerifyPhoneOtpEvent(otp),
+                            VerifyPhoneOtpEvent(
+                              otp,
+                              phoneController.text.trim(),
+                            ),
                           );
                         },
                       ),
@@ -881,7 +872,187 @@ class RegisterScreen extends StatelessWidget {
                         phoneOtpController.clear();
 
                         context.read<RegisterBloc>().add(
-                          const SendPhoneOtpEvent(),
+                          SendPhoneOtpEvent(phoneController.text.trim()),
+                        );
+                      },
+                      child: const Text(
+                        "Resend OTP",
+                        style: TextStyle(color: Color(0xFFFFD700)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _maskEmail(String email) {
+    final trimmed = email.trim();
+    final atIndex = trimmed.indexOf('@');
+    if (atIndex <= 2) {
+      return trimmed;
+    }
+    final name = trimmed.substring(0, atIndex);
+    final domain = trimmed.substring(atIndex);
+    final visiblePart = name.substring(0, 2);
+    return "$visiblePart****$domain";
+  }
+
+  Future<void> _showEmailOtpBottomSheet(BuildContext context) async {
+    emailOtpController.clear();
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (bottomSheetContext) {
+        return BlocListener<RegisterBloc, RegisterState>(
+          listener: (context, state) {
+            if (state.emailVerified) {
+              Navigator.pop(bottomSheetContext);
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(bottomSheetContext).viewInsets.bottom,
+            ),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(20, 15, 20, 20),
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 12, 9, 7),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Bottom sheet handle
+                    Container(
+                      width: 45,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.white54,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    const Icon(
+                      Icons.email_outlined,
+                      color: Color(0xFFFFD700),
+                      size: 42,
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    const Text(
+                      "Verify Email Address",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Text(
+                      "OTP sent on the "
+                      "${_maskEmail(emailController.text)} address",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // OTP
+                    Pinput(
+                      length: 6,
+                      controller: emailOtpController,
+                      keyboardType: TextInputType.number,
+                      autofocus: true,
+
+                      defaultPinTheme: PinTheme(
+                        width: 45,
+                        height: 50,
+                        textStyle: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white54),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+
+                      focusedPinTheme: PinTheme(
+                        width: 45,
+                        height: 50,
+                        textStyle: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0xFFFFC107),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: FamoElevatedButton(
+                        text: "Verify OTP",
+                        onPressed: () {
+                          final otp = emailOtpController.text.trim();
+
+                          if (otp.length != 6) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Please enter a valid 6-digit OTP",
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+
+                          context.read<RegisterBloc>().add(
+                            VerifyEmailOtpEvent(
+                              otp,
+                              emailController.text.trim(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    TextButton(
+                      onPressed: () {
+                        emailOtpController.clear();
+
+                        context.read<RegisterBloc>().add(
+                          SendEmailOtpEvent(emailController.text.trim()),
                         );
                       },
                       child: const Text(
