@@ -6,6 +6,7 @@ import 'package:purohitset_app/Model/Auth/guruji_login_model.dart';
 import 'package:purohitset_app/Model/Auth/guruji_register_model.dart';
 import 'package:purohitset_app/Constant/api_endpoint.dart';
 import 'package:purohitset_app/Model/Auth/send_OTP_model.dart';
+import 'package:purohitset_app/Model/Auth/verify_otp_model.dart';
 
 class AuthRepository {
   final Dio dio = Dio();
@@ -147,7 +148,11 @@ class AuthRepository {
   }
 
   // Create the function for sending OTP (phone or email)
-  Future<SendOTPModel?> sendOTP(String channel, String destination) async {
+  Future<SendOTPModel?> sendOTP(
+    String channel,
+    String destination, {
+    String purpose = "booking_verification",
+  }) async {
     final sendOtpApi = ApiEndpoint().hostUrl + ApiEndpoint().sendOTP;
 
     debugPrint("Send OTP Api is : $sendOtpApi");
@@ -158,7 +163,7 @@ class AuthRepository {
         data: {
           "channel": channel,
           "destination": destination,
-          "purpose": "guruji_registration",
+          "purpose": purpose,
         },
         options: Options(
           headers: {
@@ -194,11 +199,12 @@ class AuthRepository {
   }
 
   // Create the function for verifying OTP (phone or email)
-  Future<bool> verifyOTP({
+  Future<VerifyOTPModel?> verifyOTP({
     required String channel,
     required String destination,
     required String verificationUid,
     required String otp,
+    String purpose = "booking_verification",
   }) async {
     final verifyOtpApi = ApiEndpoint().hostUrl + ApiEndpoint().verifyOTP;
 
@@ -212,6 +218,7 @@ class AuthRepository {
           "destination": destination,
           "verification_uid": verificationUid,
           "otp": otp,
+          "purpose": purpose,
         },
         options: Options(
           headers: {
@@ -225,12 +232,15 @@ class AuthRepository {
       debugPrint("Verify OTP Response: ${response.data}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data is Map && response.data["success"] == true) {
-          return true;
+        if (response.data is Map) {
+          final model = VerifyOTPModel.fromJson(response.data);
+          if (model.success == true || model.data?.verified == true) {
+            return model;
+          }
         }
       }
 
-      return false;
+      return null;
     } on DioException catch (e) {
       debugPrint('Dio Error Type: ${e.type}');
       debugPrint('Dio Error Message: ${e.message}');

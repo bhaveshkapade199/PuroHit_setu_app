@@ -3,6 +3,7 @@ import 'package:purohitset_app/Widget/common_background.dart';
 import 'package:purohitset_app/Widget/form_button.dart';
 import 'package:purohitset_app/Widget/form_field.dart';
 
+// ignore: must_be_immutable
 class ForgetPasswordScreen extends StatelessWidget {
   ForgetPasswordScreen({super.key});
 

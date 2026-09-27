@@ -9,6 +9,7 @@ import 'package:purohitset_app/Repository/Auth/auth_repository.dart';
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final AuthRepository authRepository;
 
+  // Store verificationUid and destination between send and verify
   String _phoneVerificationUid = "";
   String _phoneDestination = "";
   String _emailVerificationUid = "";
@@ -192,24 +193,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     SendPhoneOtpEvent event,
     Emitter<RegisterState> emit,
   ) async {
-    final phone = event.phone.trim();
-    if (phone.isNotEmpty) {
-      _phoneDestination = phone;
-    }
+    debugPrint("Sending Phone OTP to: ${event.phone}");
 
-    debugPrint("Sending Phone OTP to: $_phoneDestination");
+    _phoneDestination = event.phone;
 
     try {
-      if (_phoneDestination.isEmpty) {
-        throw Exception("Please enter phone number first");
-      }
+      final result = await authRepository.sendOTP(
+        "phone",
+        _phoneDestination,
+        purpose: "booking_verification",
+      );
 
-      final response = await authRepository.sendOTP("phone", _phoneDestination);
-      if (response?.data?.verificationUid != null) {
-        _phoneVerificationUid = response!.data!.verificationUid!;
-      }
-
-      debugPrint("Phone OTP Sent Successfully. UID: $_phoneVerificationUid");
+      _phoneVerificationUid = result?.data?.verificationUid ?? "";
+      debugPrint("Phone OTP Sent. VerificationUid: $_phoneVerificationUid");
 
       emit(
         RegisterInitialState(
@@ -224,11 +220,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
           emailOtpSent: state.emailOtpSent,
           emailVerified: state.emailVerified,
-          isPasswordVisible: state.isPasswordVisible,
         ),
       );
     } catch (e) {
-      debugPrint("Phone OTP Error: $e");
+      debugPrint("Phone OTP Send Error: $e");
 
       emit(
         RegisterErrorState(
@@ -245,7 +240,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
           emailOtpSent: state.emailOtpSent,
           emailVerified: state.emailVerified,
-          isPasswordVisible: state.isPasswordVisible,
         ),
       );
     }
@@ -259,42 +253,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     VerifyPhoneOtpEvent event,
     Emitter<RegisterState> emit,
   ) async {
-    final phone = event.phone.trim().isNotEmpty
-        ? event.phone.trim()
-        : _phoneDestination;
-
-    debugPrint("VERIFY PHONE OTP = [${event.otp}] for phone: $phone");
+    debugPrint("Verifying Phone OTP: ${event.otp}");
 
     try {
-      if (event.otp.length != 6) {
-        throw Exception("Please enter a valid 6-digit OTP");
-      }
+      final result = await authRepository.verifyOTP(
+        channel: "phone",
+        destination: _phoneDestination,
+        verificationUid: _phoneVerificationUid,
+        otp: event.otp,
+        purpose: "booking_verification",
+      );
 
-      bool isVerified = false;
-      try {
-        if (_phoneVerificationUid.isNotEmpty) {
-          isVerified = await authRepository.verifyOTP(
-            channel: "phone",
-            destination: phone,
-            verificationUid: _phoneVerificationUid,
-            otp: event.otp,
-          );
-        }
-      } catch (e) {
-        // Fallback for development testing
-        if (event.otp == "123456") {
-          isVerified = true;
-        } else {
-          rethrow;
-        }
-      }
-
-      if (!isVerified && event.otp == "123456") {
-        isVerified = true;
-      }
-
-      if (isVerified) {
-        debugPrint("Phone OTP Verified");
+      if (result != null && (result.success == true || result.data?.verified == true)) {
+        debugPrint("Phone OTP Verified Successfully");
 
         emit(
           RegisterInitialState(
@@ -309,14 +280,14 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
             emailOtpSent: state.emailOtpSent,
             emailVerified: state.emailVerified,
-            isPasswordVisible: state.isPasswordVisible,
           ),
         );
       } else {
-        throw Exception("Invalid phone OTP");
+        throw Exception("OTP verification failed");
       }
     } catch (e) {
-      debugPrint("Verify Phone OTP Error: $e");
+      debugPrint("Phone OTP Verify Error: $e");
+
       emit(
         RegisterErrorState(
           errorMessage: e.toString().replaceFirst("Exception: ", ""),
@@ -332,7 +303,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
           emailOtpSent: state.emailOtpSent,
           emailVerified: state.emailVerified,
-          isPasswordVisible: state.isPasswordVisible,
         ),
       );
     }
@@ -346,24 +316,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     SendEmailOtpEvent event,
     Emitter<RegisterState> emit,
   ) async {
-    final email = event.email.trim();
-    if (email.isNotEmpty) {
-      _emailDestination = email;
-    }
+    debugPrint("Sending Email OTP to: ${event.email}");
 
-    debugPrint("Sending Email OTP to: $_emailDestination");
+    _emailDestination = event.email;
 
     try {
-      if (_emailDestination.isEmpty) {
-        throw Exception("Please enter email first");
-      }
+      final result = await authRepository.sendOTP(
+        "email",
+        _emailDestination,
+        purpose: "booking_verification",
+      );
 
-      final response = await authRepository.sendOTP("email", _emailDestination);
-      if (response?.data?.verificationUid != null) {
-        _emailVerificationUid = response!.data!.verificationUid!;
-      }
-
-      debugPrint("Email OTP Sent Successfully. UID: $_emailVerificationUid");
+      _emailVerificationUid = result?.data?.verificationUid ?? "";
+      debugPrint("Email OTP Sent. VerificationUid: $_emailVerificationUid");
 
       emit(
         RegisterInitialState(
@@ -378,11 +343,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
           emailOtpSent: true,
           emailVerified: false,
-          isPasswordVisible: state.isPasswordVisible,
         ),
       );
     } catch (e) {
-      debugPrint("Email OTP Error: $e");
+      debugPrint("Email OTP Send Error: $e");
 
       emit(
         RegisterErrorState(
@@ -399,7 +363,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
           emailOtpSent: false,
           emailVerified: false,
-          isPasswordVisible: state.isPasswordVisible,
         ),
       );
     }
@@ -413,42 +376,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     VerifyEmailOtpEvent event,
     Emitter<RegisterState> emit,
   ) async {
-    final email = event.email.trim().isNotEmpty
-        ? event.email.trim()
-        : _emailDestination;
-
-    debugPrint("VERIFY EMAIL OTP = [${event.otp}] for email: $email");
+    debugPrint("Verifying Email OTP: ${event.otp}");
 
     try {
-      if (event.otp.length != 6) {
-        throw Exception("Please enter a valid 6-digit OTP");
-      }
+      final result = await authRepository.verifyOTP(
+        channel: "email",
+        destination: _emailDestination,
+        verificationUid: _emailVerificationUid,
+        otp: event.otp,
+        purpose: "booking_verification",
+      );
 
-      bool isVerified = false;
-      try {
-        if (_emailVerificationUid.isNotEmpty) {
-          isVerified = await authRepository.verifyOTP(
-            channel: "email",
-            destination: email,
-            verificationUid: _emailVerificationUid,
-            otp: event.otp,
-          );
-        }
-      } catch (e) {
-        // Fallback for development testing
-        if (event.otp == "123456") {
-          isVerified = true;
-        } else {
-          rethrow;
-        }
-      }
-
-      if (!isVerified && event.otp == "123456") {
-        isVerified = true;
-      }
-
-      if (isVerified) {
-        debugPrint("Email OTP Verified");
+      if (result != null && (result.success == true || result.data?.verified == true)) {
+        debugPrint("Email OTP Verified Successfully");
 
         emit(
           RegisterInitialState(
@@ -463,14 +403,14 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
             emailOtpSent: true,
             emailVerified: true,
-            isPasswordVisible: state.isPasswordVisible,
           ),
         );
       } else {
-        throw Exception("Invalid email OTP");
+        throw Exception("OTP verification failed");
       }
     } catch (e) {
-      debugPrint("Verify Email OTP Error: $e");
+      debugPrint("Email OTP Verify Error: $e");
+
       emit(
         RegisterErrorState(
           errorMessage: e.toString().replaceFirst("Exception: ", ""),
@@ -486,7 +426,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
           emailOtpSent: true,
           emailVerified: false,
-          isPasswordVisible: state.isPasswordVisible,
         ),
       );
     }
