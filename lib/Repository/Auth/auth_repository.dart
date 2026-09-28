@@ -20,17 +20,12 @@ class AuthRepository {
     required String gender,
     required String dateOfBirth,
     required String phone,
-    required String alternatePhone,
     required String whatsappNumber,
     required String email,
     required String password,
-    required String bio,
     required String religion,
     required String sampraday,
     required String vedaShakha,
-    required String qualification,
-    required int experienceYears,
-    required String languagePreference,
   }) async {
     final registerApi = ApiEndpoint().baseUrl + ApiEndpoint().gurujiRegApi;
 
@@ -44,17 +39,12 @@ class AuthRepository {
       "gender": gender,
       "date_of_birth": dateOfBirth,
       "phone": phone,
-      "alternate_phone": alternatePhone,
       "whatsapp_number": whatsappNumber,
       "email": email,
       "password": password,
-      "bio": bio,
       "religion": religion,
       "sampraday": sampraday,
       "veda_shakha": vedaShakha,
-      "qualification": qualification,
-      "experience_years": experienceYears,
-      "language_preference": languagePreference,
     };
 
     debugPrint("REGISTER REQUEST:");

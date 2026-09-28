@@ -58,7 +58,7 @@ class FormTextField extends StatelessWidget {
           suffixIcon: suffixIcon,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 6,
-            vertical: 16,
+            vertical: 8,
           ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
           enabledBorder: OutlineInputBorder(

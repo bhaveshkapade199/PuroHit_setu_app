@@ -67,12 +67,19 @@ class FamoElevatedButton extends StatelessWidget {
               onTap: onPressed,
               borderRadius: BorderRadius.circular(30),
               child: Center(
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      text,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -16,19 +16,14 @@ class RegisterUserEvent extends RegisterEvent {
   final String dateOfBirth;
 
   final String phone;
-  final String alternatePhone;
   final String whatsappNumber;
   final String email;
 
   final String password;
 
-  final String bio;
   final String religion;
   final String sampraday;
   final String vedaShakha;
-  final String qualification;
-  final int experienceYears;
-  final String languagePreference;
 
   const RegisterUserEvent({
     required this.firstName,
@@ -37,17 +32,12 @@ class RegisterUserEvent extends RegisterEvent {
     required this.gender,
     required this.dateOfBirth,
     required this.phone,
-    required this.alternatePhone,
     required this.whatsappNumber,
     required this.email,
     required this.password,
-    required this.bio,
     required this.religion,
     required this.sampraday,
     required this.vedaShakha,
-    required this.qualification,
-    required this.experienceYears,
-    required this.languagePreference,
   });
 
   @override
@@ -58,17 +48,12 @@ class RegisterUserEvent extends RegisterEvent {
     gender,
     dateOfBirth,
     phone,
-    alternatePhone,
     whatsappNumber,
     email,
     password,
-    bio,
     religion,
     sampraday,
     vedaShakha,
-    qualification,
-    experienceYears,
-    languagePreference,
   ];
 }
 

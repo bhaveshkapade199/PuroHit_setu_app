@@ -475,8 +475,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
     debugPrint("Veda Shakha: ${currentState.vedaShakha}");
 
-    debugPrint("Language: ${event.languagePreference}");
-
     debugPrint("Phone Verified: ${currentState.phoneVerified}");
 
     debugPrint("Email Verified: ${currentState.emailVerified}");
@@ -556,22 +554,14 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         dateOfBirth: event.dateOfBirth,
 
         phone: event.phone,
-        alternatePhone: event.alternatePhone,
         whatsappNumber: event.whatsappNumber,
 
         email: event.email,
         password: event.password,
 
-        bio: event.bio,
-
         religion: currentState.religion,
         sampraday: currentState.sampraday,
         vedaShakha: currentState.vedaShakha,
-
-        qualification: event.qualification,
-        experienceYears: event.experienceYears,
-
-        languagePreference: event.languagePreference,
       );
 
       if (response != null) {

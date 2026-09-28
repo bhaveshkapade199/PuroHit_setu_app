@@ -14,7 +14,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   ) async {
     emit(SplashLoading());
 
-    // Splash screen display time
+    // Splash screen display se
     await Future.delayed(const Duration(seconds: 5));
 
     final box = GetStorage();

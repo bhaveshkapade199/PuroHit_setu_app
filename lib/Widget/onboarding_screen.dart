@@ -82,10 +82,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             currentPage = state.currentPage;
           }
 
+          final size = MediaQuery.sizeOf(context);
+          final isLandscape =
+              MediaQuery.orientationOf(context) == Orientation.landscape;
+          final isTablet = size.width >= 600;
+
+          // Adaptive ripple image size
+          final double rippleImageSize = isLandscape
+              ? (size.height * 0.28).clamp(70.0, 130.0)
+              : (size.height * 0.20).clamp(110.0, 210.0);
+
           return Scaffold(
             backgroundColor: const Color.fromARGB(255, 255, 242, 228),
             body: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('Assets/Images/puja-path.png'),
                   fit: BoxFit.cover,
@@ -98,210 +108,289 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.8),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: TextButton(
-                            onPressed: () {
-                              context.read<OnboardingBloc>().add(
-                                SkipOnboardingEvent(),
-                              );
-                            },
-                            child: Text(
-                              'Skip',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.amber,
+                child: SafeArea(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: isLandscape ? 850 : (isTablet ? 550 : double.infinity),
+                      ),
+                      child: Column(
+                        children: [
+                          // Skip button
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isTablet ? 24 : 12,
+                                vertical: isLandscape ? 4 : 8,
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  context.read<OnboardingBloc>().add(
+                                    SkipOnboardingEvent(),
+                                  );
+                                },
+                                child: const Text(
+                                  'Skip',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.amber,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
 
-                      Expanded(
-                        child: PageView.builder(
-                          controller: _pageController,
-                          itemCount: onboardingPages.length,
+                          // Content PageView
+                          Expanded(
+                            child: PageView.builder(
+                              controller: _pageController,
+                              itemCount: onboardingPages.length,
+                              onPageChanged: (index) {
+                                context.read<OnboardingBloc>().add(
+                                  PageChangedOnboardingEvent(index),
+                                );
+                              },
+                              itemBuilder: (context, index) {
+                                final page = onboardingPages[index];
 
-                          onPageChanged: (index) {
-                            context.read<OnboardingBloc>().add(
-                              PageChangedOnboardingEvent(index),
-                            );
-                          },
-
-                          itemBuilder: (context, index) {
-                            final page = onboardingPages[index];
-
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 30,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Image
-                                  ImageRippleAnimation(
-                                    image: page.image,
-                                    imageSize: 220,
-                                  ),
-
-                                  const SizedBox(height: 20),
-
-                                  AnimateText(
-                                    page.title,
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      color: Color(0xFFFFD700), // Golden
-                                      fontWeight: FontWeight.w600,
-                                      shadows: [
-                                        Shadow(
-                                          color: Color(
-                                            0xFFFFD700,
-                                          ).withValues(alpha: 0.8),
-                                          blurRadius: 12,
-                                          offset: Offset(0, 0),
-                                        ),
-                                        Shadow(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.8,
+                                if (isLandscape) {
+                                  // Landscape layout: side-by-side row
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 4,
+                                          child: Center(
+                                            child: ImageRippleAnimation(
+                                              image: page.image,
+                                              imageSize: rippleImageSize,
+                                            ),
                                           ),
-                                          blurRadius: 4,
-                                          offset: Offset(2, 2),
+                                        ),
+                                        const SizedBox(width: 20),
+                                        Expanded(
+                                          flex: 6,
+                                          child: SingleChildScrollView(
+                                            physics: const BouncingScrollPhysics(),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                AnimateText(
+                                                  page.title,
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    color: Color(0xFFFFD700),
+                                                    fontWeight: FontWeight.w600,
+                                                    shadows: [
+                                                      Shadow(
+                                                        color: Color(0xFFFFD700),
+                                                        blurRadius: 10,
+                                                      ),
+                                                      Shadow(
+                                                        color: Colors.black,
+                                                        blurRadius: 4,
+                                                        offset: Offset(2, 2),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  type: AnimateTextType.bottomToTop,
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  page.description,
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    height: 1.4,
+                                                    color: Color.fromARGB(
+                                                      255,
+                                                      249,
+                                                      242,
+                                                      242,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
-                                    type: AnimateTextType.bottomToTop,
+                                  );
+                                }
+
+                                // Portrait layout
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ImageRippleAnimation(
+                                        image: page.image,
+                                        imageSize: rippleImageSize,
+                                      ),
+                                      SizedBox(height: isTablet ? 30 : 20),
+                                      AnimateText(
+                                        page.title,
+                                        style: TextStyle(
+                                          fontSize: isTablet ? 26 : 22,
+                                          color: const Color(0xFFFFD700),
+                                          fontWeight: FontWeight.w600,
+                                          shadows: const [
+                                            Shadow(
+                                              color: Color(0xFFFFD700),
+                                              blurRadius: 12,
+                                            ),
+                                            Shadow(
+                                              color: Colors.black,
+                                              blurRadius: 4,
+                                              offset: Offset(2, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        type: AnimateTextType.bottomToTop,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        page.description,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: isTablet ? 18 : 15,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1.5,
+                                          color: const Color.fromARGB(
+                                            255,
+                                            249,
+                                            242,
+                                            242,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-
-                                  const SizedBox(height: 10),
-
-                                  // Description
-                                  Text(
-                                    page.description,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.5,
-                                      color: Color.fromARGB(255, 249, 242, 242),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(onboardingPages.length, (
-                          index,
-                        ) {
-                          return AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            height: 8,
-                            width: currentPage == index ? 25 : 8,
-                            decoration: BoxDecoration(
-                              color: currentPage == index
-                                  ? const Color(0xffedca80)
-                                  : Colors.grey.shade300,
-                              borderRadius: BorderRadius.circular(10),
+                                );
+                              },
                             ),
-                          );
-                        }),
-                      ),
+                          ),
 
-                      const SizedBox(height: 30),
-
-            
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 25,
-                          vertical: 20,
-                        ),
-                        child: Row(
-                          children: [
-            
-                            if (currentPage > 0)
-                              Expanded(
-                                child: OutlinedButton(
-                                  onPressed: () {
-                                    context.read<OnboardingBloc>().add(
-                                      PreviousOnboardingEvent(),
-                                    );
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    minimumSize: const Size(
-                                      double.infinity,
-                                      55,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Back',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                ),
-                              ),
-
-                            if (currentPage > 0) const SizedBox(width: 15),
-
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if (currentPage ==
-                                      onboardingPages.length - 1) {
-                                    context.read<OnboardingBloc>().add(
-                                      GetStartedEvent(),
-                                    );
-                                  } else {
-                                    context.read<OnboardingBloc>().add(
-                                      NextOnboardingEvent(),
-                                    );
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(
-                                    0xFFFFD700,
-                                  ).withValues(alpha: 0.9),
-                                  foregroundColor: const Color.fromARGB(
-                                    255,
-                                    106,
-                                    103,
-                                    103,
-                                  ),
-                                  minimumSize: const Size(double.infinity, 55),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                child: Text(
-                                  currentPage == onboardingPages.length - 1
-                                      ? 'Get Started'
-                                      : 'Next',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+                          // Page dots
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: isLandscape ? 6 : 14,
                             ),
-                            SizedBox(height: 20),
-                          ],
-                        ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(onboardingPages.length, (
+                                index,
+                              ) {
+                                return AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  height: 8,
+                                  width: currentPage == index ? 25 : 8,
+                                  decoration: BoxDecoration(
+                                    color: currentPage == index
+                                        ? const Color(0xffedca80)
+                                        : Colors.grey.shade400,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                );
+                              }),
+                            ),
+                          ),
+
+                          // Bottom buttons
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              isTablet ? 32 : 20,
+                              4,
+                              isTablet ? 32 : 20,
+                              isLandscape ? 10 : 20,
+                            ),
+                            child: Row(
+                              children: [
+                                if (currentPage > 0)
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        context.read<OnboardingBloc>().add(
+                                          PreviousOnboardingEvent(),
+                                        );
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                        minimumSize: Size(
+                                          double.infinity,
+                                          isLandscape ? 44 : 50,
+                                        ),
+                                        side: const BorderSide(
+                                          color: Color(0xFFFFD700),
+                                          width: 1.2,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Back',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                if (currentPage > 0) const SizedBox(width: 15),
+
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      if (currentPage ==
+                                          onboardingPages.length - 1) {
+                                        context.read<OnboardingBloc>().add(
+                                          GetStartedEvent(),
+                                        );
+                                      } else {
+                                        context.read<OnboardingBloc>().add(
+                                          NextOnboardingEvent(),
+                                        );
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFFFD700),
+                                      foregroundColor: Colors.black87,
+                                      minimumSize: Size(
+                                        double.infinity,
+                                        isLandscape ? 44 : 50,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      currentPage == onboardingPages.length - 1
+                                          ? 'Get Started'
+                                          : 'Next',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),

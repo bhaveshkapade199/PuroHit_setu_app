@@ -6,23 +6,35 @@ class RegisterOtpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+    final logoSize = isLandscape ? 80.0 : 130.0;
+
     return Scaffold(
       body: CommonBackground(
-        child: Column(
-          children: [
-            
-            Image.asset(
-              'Assets/Images/purohit-setu-logo.webp',
-              width: 150,
-              height: 150,
-              fit: BoxFit.cover,
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'Assets/Images/purohit-setu-logo.webp',
+                      width: logoSize,
+                      height: logoSize,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 12),
+                    const AppTitle(title: "OTP Verification"),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
             ),
-
-            AppTitle(title: "OTP"),
-
-            SizedBox(height: 20),
-            // OtpBoxField(controllers: otpcontroller, focusNodes: otpFocusNodes),
-          ],
+          ),
         ),
       ),
     );

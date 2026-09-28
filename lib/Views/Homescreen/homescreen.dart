@@ -20,6 +20,11 @@ class Homescreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
       builder: (context, state) {
+        final size = MediaQuery.sizeOf(context);
+        final isLandscape =
+            MediaQuery.orientationOf(context) == Orientation.landscape;
+        final appBarHeight = isLandscape ? 56.0 : 64.0;
+
         return PopScope(
           canPop: state.currentIndex == 0,
           onPopInvokedWithResult: (didPop, result) {
@@ -32,9 +37,9 @@ class Homescreen extends StatelessWidget {
             }
           },
           child: SafeArea(
-            top: false,
-            left: false,
-            right: false,
+            top: true,
+            left: true,
+            right: true,
             bottom: true,
             child: Scaffold(
               // Attach key to Scaffold
@@ -47,7 +52,7 @@ class Homescreen extends StatelessWidget {
               // ------------------------------------------------
               appBar: state.currentIndex == 0
                   ? PreferredSize(
-                      preferredSize: const Size(double.infinity, 65),
+                      preferredSize: Size(double.infinity, appBarHeight),
                       child: Container(
                         decoration: BoxDecoration(
                           color: const Color(0xFFFFD3A1).withValues(alpha: 0.8),
@@ -61,10 +66,9 @@ class Homescreen extends StatelessWidget {
                           ],
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 3,
-                            right: 8,
-                            top: 10,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,43 +76,35 @@ class Homescreen extends StatelessWidget {
                               // ------------------------------------------------
                               // DRAWER MENU BUTTON
                               // ------------------------------------------------
-                              Container(
-                                height: 80,
-                                width: 70,
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage(
-                                      'Assets/Images/purohit-setu-logo.webp',
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                              Image.asset(
+                                'Assets/Images/purohit-setu-logo.webp',
+                                height: isLandscape ? 44 : 50,
+                                width: isLandscape ? 44 : 50,
+                                fit: BoxFit.contain,
                               ),
+                              const SizedBox(width: 8),
 
                               // ------------------------------------------------
                               // LOCATION
                               // ------------------------------------------------
-                              Expanded(
+                              const Expanded(
                                 child: Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.location_on,
                                       color: Color(0xFFEB4A0A),
-                                      size: 24,
+                                      size: 22,
                                     ),
-
-                                    const Expanded(
-                                      child: SizedBox(
-                                        width: 80,
-                                        child: Text(
-                                          "Pune, Maharashtra",
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700,
-                                          ),
+                                    SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        "Pune, Maharashtra",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
                                         ),
                                       ),
                                     ),
@@ -120,7 +116,7 @@ class Homescreen extends StatelessWidget {
                               // NOTIFICATION
                               // ------------------------------------------------
                               Container(
-                                padding: const EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(7),
                                 decoration: BoxDecoration(
                                   color: const Color(
                                     0xFFE0AC69,
@@ -134,6 +130,7 @@ class Homescreen extends StatelessWidget {
                                 child: const Icon(
                                   Icons.notifications_none_outlined,
                                   color: Colors.black,
+                                  size: 20,
                                 ),
                               ),
                               IconButton(
@@ -143,7 +140,7 @@ class Homescreen extends StatelessWidget {
                                 icon: const Icon(
                                   Icons.menu,
                                   color: Colors.black,
-                                  size: 28,
+                                  size: 26,
                                 ),
                               ),
                             ],
@@ -154,7 +151,7 @@ class Homescreen extends StatelessWidget {
                   : null,
 
               drawer: Drawer(
-                width: 320,
+                width: (size.width * 0.75).clamp(260.0, 320.0),
 
                 child: ListView(
                   padding: EdgeInsets.zero,
@@ -410,9 +407,9 @@ class Homescreen extends StatelessWidget {
 
                 circleColor: Colors.white,
 
-                height: 65,
+                height: isLandscape ? 54 : 65,
 
-                circleWidth: 60,
+                circleWidth: isLandscape ? 50 : 60,
 
                 cornerRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
