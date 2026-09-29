@@ -9,10 +9,12 @@ import 'package:purohitset_app/Repository/Auth/auth_repository.dart';
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final AuthRepository authRepository;
 
-  // Store verificationUid and destination between send and verify
+  // Store verificationUid, verificationToken, and destination between send and verify
   String _phoneVerificationUid = "";
+  String _phoneVerificationToken = "";
   String _phoneDestination = "";
   String _emailVerificationUid = "";
+  String _emailVerificationToken = "";
   String _emailDestination = "";
 
   RegisterBloc(this.authRepository) : super(const RegisterInitialState()) {
@@ -201,7 +203,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       final result = await authRepository.sendOTP(
         "phone",
         _phoneDestination,
-        purpose: "booking_verification",
+        purpose: "guruji_registration",
       );
 
       _phoneVerificationUid = result?.data?.verificationUid ?? "";
@@ -261,11 +263,20 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         destination: _phoneDestination,
         verificationUid: _phoneVerificationUid,
         otp: event.otp,
-        purpose: "booking_verification",
+        purpose: "guruji_registration",
       );
 
       if (result != null && (result.success == true || result.data?.verified == true)) {
         debugPrint("Phone OTP Verified Successfully");
+
+        if (result.data?.verificationToken != null && result.data!.verificationToken!.isNotEmpty) {
+          _phoneVerificationToken = result.data!.verificationToken!;
+        }
+        if (result.data?.verificationUid != null && result.data!.verificationUid!.isNotEmpty) {
+          _phoneVerificationUid = result.data!.verificationUid!;
+        }
+        debugPrint("Phone Verification UID: $_phoneVerificationUid");
+        debugPrint("Phone Verification Token: $_phoneVerificationToken");
 
         emit(
           RegisterInitialState(
@@ -277,9 +288,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
             phoneOtpSent: true,
             phoneVerified: true,
+            phoneVerificationUid: _phoneVerificationUid,
+            phoneVerificationToken: _phoneVerificationToken,
 
             emailOtpSent: state.emailOtpSent,
             emailVerified: state.emailVerified,
+            emailVerificationUid: state.emailVerificationUid,
+            emailVerificationToken: state.emailVerificationToken,
           ),
         );
       } else {
@@ -324,7 +339,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       final result = await authRepository.sendOTP(
         "email",
         _emailDestination,
-        purpose: "booking_verification",
+        purpose: "guruji_registration",
       );
 
       _emailVerificationUid = result?.data?.verificationUid ?? "";
@@ -384,11 +399,20 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         destination: _emailDestination,
         verificationUid: _emailVerificationUid,
         otp: event.otp,
-        purpose: "booking_verification",
+        purpose: "guruji_registration",
       );
 
       if (result != null && (result.success == true || result.data?.verified == true)) {
         debugPrint("Email OTP Verified Successfully");
+
+        if (result.data?.verificationToken != null && result.data!.verificationToken!.isNotEmpty) {
+          _emailVerificationToken = result.data!.verificationToken!;
+        }
+        if (result.data?.verificationUid != null && result.data!.verificationUid!.isNotEmpty) {
+          _emailVerificationUid = result.data!.verificationUid!;
+        }
+        debugPrint("Email Verification UID: $_emailVerificationUid");
+        debugPrint("Email Verification Token: $_emailVerificationToken");
 
         emit(
           RegisterInitialState(
@@ -400,9 +424,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
             phoneOtpSent: state.phoneOtpSent,
             phoneVerified: state.phoneVerified,
+            phoneVerificationUid: state.phoneVerificationUid,
+            phoneVerificationToken: state.phoneVerificationToken,
 
             emailOtpSent: true,
             emailVerified: true,
+            emailVerificationUid: _emailVerificationUid,
+            emailVerificationToken: _emailVerificationToken,
           ),
         );
       } else {
@@ -544,6 +572,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     );
 
     try {
+      final phoneUid = _phoneVerificationUid.isNotEmpty
+          ? _phoneVerificationUid
+          : currentState.phoneVerificationUid;
+      final phoneToken = _phoneVerificationToken.isNotEmpty
+          ? _phoneVerificationToken
+          : currentState.phoneVerificationToken;
+      final emailUid = _emailVerificationUid.isNotEmpty
+          ? _emailVerificationUid
+          : currentState.emailVerificationUid;
+      final emailToken = _emailVerificationToken.isNotEmpty
+          ? _emailVerificationToken
+          : currentState.emailVerificationToken;
+
       final response = await authRepository.register(
         firstName: event.firstName,
         middleName: event.middleName,
@@ -562,6 +603,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         religion: currentState.religion,
         sampraday: currentState.sampraday,
         vedaShakha: currentState.vedaShakha,
+
+        phoneVerificationUid: phoneUid,
+        phoneVerificationToken: phoneToken,
+        emailVerificationUid: emailUid,
+        emailVerificationToken: emailToken,
+        otpPurpose: "guruji_registration",
       );
 
       if (response != null) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:purohitset_app/Bloc/Auth/Forget_password_bloc/forget_password_bloc.dart';
 import 'package:purohitset_app/Bloc/BottomNavigationBar/bottomNavigation_bloc.dart';
 
 import 'package:purohitset_app/Repository/Auth/auth_repository.dart';
@@ -21,6 +22,7 @@ void main() async {
         BlocProvider(create: (_) => LoginBloc(authRepository)),
         BlocProvider(create: (_) => RegisterBloc(authRepository)),
         BlocProvider(create: (_) => BottomNavigationBloc()),
+        BlocProvider(create: (_) => ForgetPasswordBloc()),
       ],
       child: const MyApp(),
     ),

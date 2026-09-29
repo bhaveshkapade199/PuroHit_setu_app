@@ -13,13 +13,16 @@ abstract class RegisterState extends Equatable {
   // Phone OTP
   final bool phoneOtpSent;
   final bool phoneVerified;
+  final String phoneVerificationUid;
+  final String phoneVerificationToken;
 
   // Email OTP
   final bool emailOtpSent;
   final bool emailVerified;
+  final String emailVerificationUid;
+  final String emailVerificationToken;
 
-  //for the password visible
-
+  // for the password visible
   final bool isPasswordVisible;
 
   const RegisterState({
@@ -31,9 +34,13 @@ abstract class RegisterState extends Equatable {
 
     this.phoneOtpSent = false,
     this.phoneVerified = false,
+    this.phoneVerificationUid = "",
+    this.phoneVerificationToken = "",
 
     this.emailOtpSent = false,
     this.emailVerified = false,
+    this.emailVerificationUid = "",
+    this.emailVerificationToken = "",
 
     this.isPasswordVisible = false,
   });
@@ -48,9 +55,14 @@ abstract class RegisterState extends Equatable {
 
     phoneOtpSent,
     phoneVerified,
+    phoneVerificationUid,
+    phoneVerificationToken,
 
     emailOtpSent,
     emailVerified,
+    emailVerificationUid,
+    emailVerificationToken,
+
     isPasswordVisible,
   ];
 }
@@ -69,9 +81,14 @@ class RegisterInitialState extends RegisterState {
 
     super.phoneOtpSent,
     super.phoneVerified,
+    super.phoneVerificationUid,
+    super.phoneVerificationToken,
 
     super.emailOtpSent,
     super.emailVerified,
+    super.emailVerificationUid,
+    super.emailVerificationToken,
+
     super.isPasswordVisible,
   });
 }
@@ -90,9 +107,14 @@ class RegisterLoadingState extends RegisterState {
 
     super.phoneOtpSent,
     super.phoneVerified,
+    super.phoneVerificationUid,
+    super.phoneVerificationToken,
 
     super.emailOtpSent,
     super.emailVerified,
+    super.emailVerificationUid,
+    super.emailVerificationToken,
+
     super.isPasswordVisible,
   });
 }
@@ -115,9 +137,14 @@ class RegisterLoadedState extends RegisterState {
 
     super.phoneOtpSent,
     super.phoneVerified,
+    super.phoneVerificationUid,
+    super.phoneVerificationToken,
 
     super.emailOtpSent,
     super.emailVerified,
+    super.emailVerificationUid,
+    super.emailVerificationToken,
+
     super.isPasswordVisible,
   });
 
@@ -132,9 +159,14 @@ class RegisterLoadedState extends RegisterState {
 
     phoneOtpSent,
     phoneVerified,
+    phoneVerificationUid,
+    phoneVerificationToken,
 
     emailOtpSent,
     emailVerified,
+    emailVerificationUid,
+    emailVerificationToken,
+
     isPasswordVisible,
   ];
 }
@@ -157,9 +189,14 @@ class RegisterErrorState extends RegisterState {
 
     super.phoneOtpSent,
     super.phoneVerified,
+    super.phoneVerificationUid,
+    super.phoneVerificationToken,
 
     super.emailOtpSent,
     super.emailVerified,
+    super.emailVerificationUid,
+    super.emailVerificationToken,
+
     super.isPasswordVisible,
   });
 
@@ -174,9 +211,14 @@ class RegisterErrorState extends RegisterState {
 
     phoneOtpSent,
     phoneVerified,
+    phoneVerificationUid,
+    phoneVerificationToken,
 
     emailOtpSent,
     emailVerified,
+    emailVerificationUid,
+    emailVerificationToken,
+
     isPasswordVisible,
   ];
 }

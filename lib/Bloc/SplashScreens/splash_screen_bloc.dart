@@ -14,12 +14,10 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   ) async {
     emit(SplashLoading());
 
-    // Splash screen display se
     await Future.delayed(const Duration(seconds: 5));
 
     final box = GetStorage();
 
-    // Check whether onboarding is completed
     final bool isOnboardingCompleted =
         box.read('onboarding_completed') ?? false;
 

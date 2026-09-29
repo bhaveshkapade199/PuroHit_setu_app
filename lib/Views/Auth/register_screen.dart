@@ -8,6 +8,7 @@ import 'package:pinput/pinput.dart';
 import 'package:purohitset_app/Bloc/Auth/register_bloc/register_bloc.dart';
 import 'package:purohitset_app/Bloc/Auth/register_bloc/register_event.dart';
 import 'package:purohitset_app/Bloc/Auth/register_bloc/register_state.dart';
+import 'package:purohitset_app/Views/Auth/login_screen.dart';
 
 import 'package:purohitset_app/Views/Auth/register_otp_screen.dart';
 import 'package:purohitset_app/Widget/common_background.dart';
@@ -46,7 +47,7 @@ class RegisterScreen extends StatelessWidget {
 
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const RegisterOtpScreen()),
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
           );
         }
 
@@ -97,7 +98,7 @@ class RegisterScreen extends StatelessWidget {
                             const AppTitle(title: "Register"),
                             SizedBox(height: isLandscape ? 16 : 28),
 
-                            // First Name
+                            // Full Name
                             FormTextField(
                               controller: fullnameController,
                               label: "Enter Full Name",
@@ -107,7 +108,13 @@ class RegisterScreen extends StatelessWidget {
                               ),
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
-                                  return "First name is required";
+                                  return "Full name is required";
+                                }
+                                final parts = value.trim().split(
+                                  RegExp(r'\s+'),
+                                );
+                                if (parts.length < 2) {
+                                  return "Please enter at least first and last name (e.g. Bhavesh Kapade)";
                                 }
                                 return null;
                               },
@@ -118,6 +125,12 @@ class RegisterScreen extends StatelessWidget {
                               label: "Select Gender",
                               icon: Icons.wc,
                               items: const ["Male", "Female", "Other"],
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please select Gender";
+                                }
+                                return null;
+                              },
                               onChanged: (value) {
                                 debugPrint("UI GENDER SELECTED = [$value]");
 
@@ -456,6 +469,12 @@ class RegisterScreen extends StatelessWidget {
                               label: "Select Religion",
                               icon: Icons.temple_hindu,
                               items: const ["Hindu"],
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please select Religion";
+                                }
+                                return null;
+                              },
                               onChanged: (value) {
                                 debugPrint("UI RELIGION SELECTED = [$value]");
 
@@ -478,6 +497,12 @@ class RegisterScreen extends StatelessWidget {
                                 "Shakta",
                                 "Other",
                               ],
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please select Sampraday";
+                                }
+                                return null;
+                              },
                               onChanged: (value) {
                                 debugPrint("UI SAMPRADAY SELECTED = [$value]");
 
@@ -500,6 +525,12 @@ class RegisterScreen extends StatelessWidget {
                                 "Samaveda",
                                 "Atharvaveda",
                               ],
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please select Veda Shakha";
+                                }
+                                return null;
+                              },
                               onChanged: (value) {
                                 debugPrint(
                                   "UI VEDA SHAKHA SELECTED = [$value]",
@@ -511,19 +542,27 @@ class RegisterScreen extends StatelessWidget {
                               },
                             ),
 
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             // Password
                             BlocBuilder<RegisterBloc, RegisterState>(
                               builder: (context, state) {
                                 return FormTextField(
                                   controller: passwordController,
-
                                   label: "Enter Password",
                                   prefixIcon: const Icon(
                                     Icons.lock,
                                     color: Colors.white,
                                   ),
                                   obscureText: !state.isPasswordVisible,
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return "Password is required";
+                                    }
+                                    if (value.trim().length < 8) {
+                                      return "Password must be at least 8 characters";
+                                    }
+                                    return null;
+                                  },
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                       state.isPasswordVisible
@@ -554,6 +593,15 @@ class RegisterScreen extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                   obscureText: !state.isPasswordVisible,
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return "Confirm Password is required";
+                                    }
+                                    if (value != passwordController.text) {
+                                      return "Passwords do not match";
+                                    }
+                                    return null;
+                                  },
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                       state.isPasswordVisible
@@ -575,10 +623,19 @@ class RegisterScreen extends StatelessWidget {
 
                             const SizedBox(height: 10),
 
-                            FamoElevatedButton(
-                              text: "Register",
-                              onPressed: () {
-                                _registerUser(context);
+                            BlocBuilder<RegisterBloc, RegisterState>(
+                              builder: (context, state) {
+                                final isLoading = state is RegisterLoadingState;
+                                return FamoElevatedButton(
+                                  text: isLoading
+                                      ? "Registering..."
+                                      : "Register",
+                                  onPressed: isLoading
+                                      ? null
+                                      : () {
+                                          _registerUser(context);
+                                        },
+                                );
                               },
                             ),
 
@@ -599,6 +656,11 @@ class RegisterScreen extends StatelessWidget {
 
   void _registerUser(BuildContext context) {
     if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please fill all required fields correctly"),
+        ),
+      );
       return;
     }
 
@@ -606,6 +668,30 @@ class RegisterScreen extends StatelessWidget {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
+      return;
+    }
+
+    final state = context.read<RegisterBloc>().state;
+
+    // Check Phone OTP verification
+    if (!state.phoneVerified) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please verify your phone number via OTP first"),
+          backgroundColor: Colors.deepOrange,
+        ),
+      );
+      return;
+    }
+
+    // Check Email OTP verification
+    if (!state.emailVerified) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please verify your email via OTP first"),
+          backgroundColor: Colors.deepOrange,
+        ),
+      );
       return;
     }
 
@@ -618,12 +704,6 @@ class RegisterScreen extends StatelessWidget {
     final firstName = name['firstName'] ?? '';
     final middleName = name['middleName'] ?? '';
     final lastName = name['lastName'] ?? '';
-
-    // =========================
-    // Current BLoC State
-    // =========================
-
-    final state = context.read<RegisterBloc>().state;
 
     // Debug
     debugPrint("========== NAME VALUES ==========");
@@ -668,10 +748,12 @@ class RegisterScreen extends StatelessWidget {
     required IconData icon,
     required List<String> items,
     required ValueChanged<String?> onChanged,
+    String? Function(String?)? validator,
   }) {
     return DropdownButtonFormField<String>(
       dropdownColor: Colors.black,
       style: const TextStyle(color: Colors.white, fontSize: 16),
+      validator: validator,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Colors.amberAccent),
@@ -683,6 +765,14 @@ class RegisterScreen extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: const BorderSide(color: Color(0xFFFFD700), width: 1),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
         ),
       ),
       iconEnabledColor: Colors.white,
@@ -698,6 +788,12 @@ class RegisterScreen extends StatelessWidget {
       controller: dobController,
       readOnly: true,
       style: const TextStyle(color: Colors.white),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return "Date of Birth is required";
+        }
+        return null;
+      },
       decoration: InputDecoration(
         labelText: "Date of Birth",
         labelStyle: const TextStyle(color: Colors.amberAccent),
@@ -710,6 +806,14 @@ class RegisterScreen extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Color(0xFFFFD95A), width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 2),
         ),
       ),
       onTap: () async {
@@ -932,9 +1036,7 @@ class _OtpBottomSheetContentState extends State<_OtpBottomSheetContent> {
               ),
               decoration: const BoxDecoration(
                 color: Color.fromARGB(255, 12, 9, 7),
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(25),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
               ),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -1022,7 +1124,9 @@ class _OtpBottomSheetContentState extends State<_OtpBottomSheetContent> {
                           if (otp.length != 6) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Please enter a valid 6-digit OTP"),
+                                content: Text(
+                                  "Please enter a valid 6-digit OTP",
+                                ),
                               ),
                             );
                             return;

@@ -12,6 +12,13 @@ class GurujiRegisterModel {
   String? sampraday;
   String? vedaShakha;
 
+  // OTP Verification parameters
+  String? phoneVerificationUid;
+  String? emailVerificationUid;
+  String? phoneVerificationToken;
+  String? emailVerificationToken;
+  String? otpPurpose;
+
   GurujiRegisterModel({
     this.firstName,
     this.middleName,
@@ -25,6 +32,11 @@ class GurujiRegisterModel {
     this.religion,
     this.sampraday,
     this.vedaShakha,
+    this.phoneVerificationUid,
+    this.emailVerificationUid,
+    this.phoneVerificationToken,
+    this.emailVerificationToken,
+    this.otpPurpose,
   });
 
   GurujiRegisterModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +52,11 @@ class GurujiRegisterModel {
     religion = json['religion'];
     sampraday = json['sampraday'];
     vedaShakha = json['veda_shakha'];
+    phoneVerificationUid = json['phone_verification_uid'];
+    emailVerificationUid = json['email_verification_uid'];
+    phoneVerificationToken = json['phone_verification_token'];
+    emailVerificationToken = json['email_verification_token'];
+    otpPurpose = json['otp_purpose'];
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +73,21 @@ class GurujiRegisterModel {
     data['religion'] = religion;
     data['sampraday'] = sampraday;
     data['veda_shakha'] = vedaShakha;
+    if (phoneVerificationUid != null) {
+      data['phone_verification_uid'] = phoneVerificationUid;
+    }
+    if (emailVerificationUid != null) {
+      data['email_verification_uid'] = emailVerificationUid;
+    }
+    if (phoneVerificationToken != null) {
+      data['phone_verification_token'] = phoneVerificationToken;
+    }
+    if (emailVerificationToken != null) {
+      data['email_verification_token'] = emailVerificationToken;
+    }
+    if (otpPurpose != null) {
+      data['otp_purpose'] = otpPurpose;
+    }
     return data;
   }
 }

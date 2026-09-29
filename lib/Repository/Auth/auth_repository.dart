@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:purohitset_app/Model/Auth/forget_password_model.dart';
 import 'package:purohitset_app/Model/Auth/guruji_login_model.dart';
 import 'package:purohitset_app/Model/Auth/guruji_register_model.dart';
 import 'package:purohitset_app/Constant/api_endpoint.dart';
@@ -26,6 +27,11 @@ class AuthRepository {
     required String religion,
     required String sampraday,
     required String vedaShakha,
+    String? phoneVerificationUid,
+    String? emailVerificationUid,
+    String? phoneVerificationToken,
+    String? emailVerificationToken,
+    String otpPurpose = "guruji_registration",
   }) async {
     final registerApi = ApiEndpoint().baseUrl + ApiEndpoint().gurujiRegApi;
 
@@ -45,6 +51,11 @@ class AuthRepository {
       "religion": religion,
       "sampraday": sampraday,
       "veda_shakha": vedaShakha,
+      "phone_verification_uid": phoneVerificationUid ?? "",
+      "email_verification_uid": emailVerificationUid ?? "",
+      "phone_verification_token": phoneVerificationToken ?? "",
+      "email_verification_token": emailVerificationToken ?? "",
+      "otp_purpose": otpPurpose,
     };
 
     debugPrint("REGISTER REQUEST:");
@@ -141,7 +152,7 @@ class AuthRepository {
   Future<SendOTPModel?> sendOTP(
     String channel,
     String destination, {
-    String purpose = "booking_verification",
+    String purpose = "guruji_registration",
   }) async {
     final sendOtpApi = ApiEndpoint().hostUrl + ApiEndpoint().sendOTP;
 
@@ -194,7 +205,7 @@ class AuthRepository {
     required String destination,
     required String verificationUid,
     required String otp,
-    String purpose = "booking_verification",
+    String purpose = "guruji_registration",
   }) async {
     final verifyOtpApi = ApiEndpoint().hostUrl + ApiEndpoint().verifyOTP;
 
@@ -244,6 +255,59 @@ class AuthRepository {
       throw Exception(e.message ?? 'Failed to verify OTP');
     } catch (e) {
       debugPrint('Unexpected OTP Verify Error: $e');
+      rethrow;
+    }
+  }
+
+  // Create the funtion for the Forget Password model
+
+  Future<ForgetPasswordModel?> forgetPassfunction(
+    String mobilenum,
+    String purpose,
+  ) async {
+    final forgetPassApi = ApiEndpoint().hostUrl + ApiEndpoint().forgetPassword;
+
+    debugPrint("Forget Password API: $forgetPassApi");
+
+    try {
+      final response = await dio.post(
+        forgetPassApi,
+        data: {"mobile": mobilenum, "otp_purpose": purpose},
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+        ),
+      );
+
+      debugPrint("Forget Password Response Code: ${response.statusCode}");
+
+      debugPrint("Forget Password Response: ${response.data}");
+
+      if (response.statusCode == 200) {
+        final result = ForgetPasswordModel.fromJson(response.data);
+
+        return result;
+      }
+
+      return null;
+    } on DioException catch (e) {
+      debugPrint('Dio Error Type: ${e.type}');
+      debugPrint('Dio Error Message: ${e.message}');
+      debugPrint('Status Code: ${e.response?.statusCode}');
+      debugPrint('Response: ${e.response?.data}');
+
+      final responseData = e.response?.data;
+
+      if (responseData is Map && responseData["message"] != null) {
+        throw Exception(responseData["message"].toString());
+      }
+
+      throw Exception(e.message ?? 'Failed to send forgot password OTP');
+    } catch (e) {
+      debugPrint('Unexpected Forget Password Error: $e');
+
       rethrow;
     }
   }
