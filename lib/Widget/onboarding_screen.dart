@@ -1,11 +1,11 @@
 import 'package:animate_text/animate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:purohitset_app/Bloc/Onboarding/onboarding_bloc.dart';
-import 'package:purohitset_app/Bloc/Onboarding/onboarding_event.dart';
-import 'package:purohitset_app/Bloc/Onboarding/onboarding_state.dart';
-import 'package:purohitset_app/Model/Onboarding_Model/onboarding_model.dart';
-import 'package:purohitset_app/Views/Auth/login_screen.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/Onboarding/onboarding_bloc.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/Onboarding/onboarding_event.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/Onboarding/onboarding_state.dart';
+import 'package:purohitset_app/Guruji_Side/Model/Onboarding_Model/onboarding_model.dart';
+import 'package:purohitset_app/Guruji_Side/Views/Auth/login_screen.dart';
 
 import 'package:purohitset_app/Widget/image_ripple_animation.dart';
 

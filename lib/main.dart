@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:purohitset_app/Bloc/Auth/Forget_password_bloc/forget_password_bloc.dart';
-import 'package:purohitset_app/Bloc/BottomNavigationBar/bottomNavigation_bloc.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/Auth/Forget_password_bloc/forget_password_bloc.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigation_bloc.dart';
 
-import 'package:purohitset_app/Repository/Auth/auth_repository.dart';
-import 'package:purohitset_app/Bloc/Auth/login_bloc/login_bloc.dart';
-import 'package:purohitset_app/Bloc/Auth/register_bloc/register_bloc.dart';
+import 'package:purohitset_app/Repository/Guruji_Auth_Repo/auth_repository.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/Auth/login_bloc/login_bloc.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/Auth/register_bloc/register_bloc.dart';
 import 'package:purohitset_app/Widget/splash_screen.dart';
 
 void main() async {

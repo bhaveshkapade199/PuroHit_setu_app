@@ -10,5 +10,5 @@ class ApiEndpoint {
 
   final String verifyOTP = "/api/otp/verify.php";
 
-  final String forgetPassword = "/gurujis/forgot_password";
+  final String forgetPassword = "/api/gurujis/forgot_password";
 }
