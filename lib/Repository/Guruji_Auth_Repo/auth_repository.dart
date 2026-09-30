@@ -38,14 +38,22 @@ class AuthRepository {
     debugPrint("========================================");
     debugPrint("REGISTER API: $registerApi");
 
+    final fullName = [firstName, middleName, lastName]
+        .where((s) => s.isNotEmpty)
+        .join(" ");
+
     final requestData = {
+      "name": fullName,
       "first_name": firstName,
       "middle_name": middleName,
       "last_name": lastName,
       "gender": gender,
       "date_of_birth": dateOfBirth,
+      "dob": dateOfBirth,
       "phone": phone,
+      "mobile": phone,
       "whatsapp_number": whatsappNumber,
+      "whatsapp": whatsappNumber,
       "email": email,
       "password": password,
       "religion": religion,
@@ -77,6 +85,13 @@ class AuthRepository {
       debugPrint("REGISTER RESPONSE: ${response.data}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data is Map) {
+          final data = response.data as Map;
+          if (data['success'] == false) {
+            final msg = data['message'] ?? 'Registration failed';
+            throw Exception(msg.toString());
+          }
+        }
         return GurujiRegisterModel.fromJson(response.data);
       }
 
@@ -98,12 +113,64 @@ class AuthRepository {
 
       if (responseData is Map) {
         final message = responseData["message"];
+        final error = responseData["error"];
         final errors = responseData["errors"];
 
         debugPrint("API Message: $message");
         debugPrint("API Validation Errors: $errors");
 
-        throw Exception(message?.toString() ?? "Registration failed");
+        String? detailedError;
+        if (errors is Map) {
+          final msgs = errors.values
+              .map((v) => v is List ? v.join(", ") : v.toString())
+              .where((s) => s.isNotEmpty)
+              .toList();
+          if (msgs.isNotEmpty) {
+            detailedError = msgs.join("\n");
+          }
+        } else if (errors is List && errors.isNotEmpty) {
+          detailedError = errors.join(", ");
+        } else if (errors is String && errors.isNotEmpty) {
+          detailedError = errors;
+        }
+
+        final combined =
+            detailedError ?? message?.toString() ?? error?.toString();
+        if (combined != null && combined.isNotEmpty) {
+          throw Exception(combined);
+        }
+      } else if (responseData is String && responseData.isNotEmpty) {
+        if (responseData.contains("Duplicate entry") &&
+            responseData.contains("phone")) {
+          throw Exception(
+            "This phone number is already registered. Please login instead.",
+          );
+        } else if (responseData.contains("Duplicate entry") &&
+            responseData.contains("email")) {
+          throw Exception(
+            "This email address is already registered. Please use another email or login.",
+          );
+        } else if (responseData.contains("Duplicate entry")) {
+          throw Exception(
+            "An account with these details already exists. Please login.",
+          );
+        }
+
+        final cleanText = responseData
+            .replaceAll(RegExp(r'<[^>]*>'), ' ')
+            .replaceAll(RegExp(r'\s+'), ' ')
+            .trim();
+        if (cleanText.isNotEmpty &&
+            cleanText.length < 150 &&
+            !cleanText.contains("<!DOCTYPE")) {
+          throw Exception(cleanText);
+        }
+      }
+
+      if (e.response?.statusCode == 500) {
+        throw Exception(
+          "Server Error (500): The server encountered an issue while saving the registration. The phone number or email might already be registered in the database, or an unexpected server exception occurred. Please try with different credentials or contact support.",
+        );
       }
 
       throw Exception(e.message ?? "Registration failed");
@@ -312,3 +379,5 @@ class AuthRepository {
     }
   }
 }
+
+

@@ -73,9 +73,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
         phoneOtpSent: state.phoneOtpSent,
         phoneVerified: state.phoneVerified,
+        phoneVerificationUid: _phoneVerificationUid.isNotEmpty ? _phoneVerificationUid : state.phoneVerificationUid,
+        phoneVerificationToken: _phoneVerificationToken.isNotEmpty ? _phoneVerificationToken : state.phoneVerificationToken,
 
         emailOtpSent: state.emailOtpSent,
         emailVerified: state.emailVerified,
+        emailVerificationUid: _emailVerificationUid.isNotEmpty ? _emailVerificationUid : state.emailVerificationUid,
+        emailVerificationToken: _emailVerificationToken.isNotEmpty ? _emailVerificationToken : state.emailVerificationToken,
+
+        isPasswordVisible: state.isPasswordVisible,
       ),
     );
   }
@@ -100,9 +106,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
         phoneOtpSent: state.phoneOtpSent,
         phoneVerified: state.phoneVerified,
+        phoneVerificationUid: _phoneVerificationUid.isNotEmpty ? _phoneVerificationUid : state.phoneVerificationUid,
+        phoneVerificationToken: _phoneVerificationToken.isNotEmpty ? _phoneVerificationToken : state.phoneVerificationToken,
 
         emailOtpSent: state.emailOtpSent,
         emailVerified: state.emailVerified,
+        emailVerificationUid: _emailVerificationUid.isNotEmpty ? _emailVerificationUid : state.emailVerificationUid,
+        emailVerificationToken: _emailVerificationToken.isNotEmpty ? _emailVerificationToken : state.emailVerificationToken,
+
+        isPasswordVisible: state.isPasswordVisible,
       ),
     );
   }
@@ -127,9 +139,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
         phoneOtpSent: state.phoneOtpSent,
         phoneVerified: state.phoneVerified,
+        phoneVerificationUid: _phoneVerificationUid.isNotEmpty ? _phoneVerificationUid : state.phoneVerificationUid,
+        phoneVerificationToken: _phoneVerificationToken.isNotEmpty ? _phoneVerificationToken : state.phoneVerificationToken,
 
         emailOtpSent: state.emailOtpSent,
         emailVerified: state.emailVerified,
+        emailVerificationUid: _emailVerificationUid.isNotEmpty ? _emailVerificationUid : state.emailVerificationUid,
+        emailVerificationToken: _emailVerificationToken.isNotEmpty ? _emailVerificationToken : state.emailVerificationToken,
+
+        isPasswordVisible: state.isPasswordVisible,
       ),
     );
   }
@@ -154,9 +172,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
         phoneOtpSent: state.phoneOtpSent,
         phoneVerified: state.phoneVerified,
+        phoneVerificationUid: _phoneVerificationUid.isNotEmpty ? _phoneVerificationUid : state.phoneVerificationUid,
+        phoneVerificationToken: _phoneVerificationToken.isNotEmpty ? _phoneVerificationToken : state.phoneVerificationToken,
 
         emailOtpSent: state.emailOtpSent,
         emailVerified: state.emailVerified,
+        emailVerificationUid: _emailVerificationUid.isNotEmpty ? _emailVerificationUid : state.emailVerificationUid,
+        emailVerificationToken: _emailVerificationToken.isNotEmpty ? _emailVerificationToken : state.emailVerificationToken,
+
+        isPasswordVisible: state.isPasswordVisible,
       ),
     );
   }
@@ -180,9 +204,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
         phoneOtpSent: state.phoneOtpSent,
         phoneVerified: state.phoneVerified,
+        phoneVerificationUid: _phoneVerificationUid.isNotEmpty ? _phoneVerificationUid : state.phoneVerificationUid,
+        phoneVerificationToken: _phoneVerificationToken.isNotEmpty ? _phoneVerificationToken : state.phoneVerificationToken,
 
         emailOtpSent: state.emailOtpSent,
         emailVerified: state.emailVerified,
+        emailVerificationUid: _emailVerificationUid.isNotEmpty ? _emailVerificationUid : state.emailVerificationUid,
+        emailVerificationToken: _emailVerificationToken.isNotEmpty ? _emailVerificationToken : state.emailVerificationToken,
+
+        isPasswordVisible: state.isPasswordVisible,
       ),
     );
   }
@@ -474,9 +504,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
         phoneOtpSent: state.phoneOtpSent,
         phoneVerified: state.phoneVerified,
+        phoneVerificationUid: _phoneVerificationUid.isNotEmpty ? _phoneVerificationUid : state.phoneVerificationUid,
+        phoneVerificationToken: _phoneVerificationToken.isNotEmpty ? _phoneVerificationToken : state.phoneVerificationToken,
 
         emailOtpSent: state.emailOtpSent,
         emailVerified: state.emailVerified,
+        emailVerificationUid: _emailVerificationUid.isNotEmpty ? _emailVerificationUid : state.emailVerificationUid,
+        emailVerificationToken: _emailVerificationToken.isNotEmpty ? _emailVerificationToken : state.emailVerificationToken,
 
         isPasswordVisible: event.isVisible,
       ),

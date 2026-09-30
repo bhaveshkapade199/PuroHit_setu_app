@@ -60,7 +60,8 @@ class LoginScreen extends StatelessWidget {
                 builder: (context, constraints) {
                   final size = MediaQuery.sizeOf(context);
                   final isLandscape =
-                      MediaQuery.orientationOf(context) == Orientation.landscape;
+                      MediaQuery.orientationOf(context) ==
+                      Orientation.landscape;
                   final isWideLandscape = isLandscape && size.width >= 620;
                   final isTablet = size.width >= 600;
 
@@ -137,28 +138,36 @@ class LoginScreen extends StatelessWidget {
                                               backgroundColor:
                                                   Colors.transparent,
                                               elevation: 0,
-                                              duration:
-                                                  const Duration(seconds: 4),
+                                              duration: const Duration(
+                                                seconds: 4,
+                                              ),
                                               content: Container(
-                                                padding:
-                                                    const EdgeInsets.all(16),
+                                                padding: const EdgeInsets.all(
+                                                  16,
+                                                ),
                                                 decoration: BoxDecoration(
-                                                  color: const Color(0xFF1E1E1E),
+                                                  color: const Color(
+                                                    0xFF1E1E1E,
+                                                  ),
                                                   borderRadius:
                                                       BorderRadius.circular(16),
                                                   border: Border.all(
-                                                    color:
-                                                        const Color(0xFFFFCD42),
+                                                    color: const Color(
+                                                      0xFFFFCD42,
+                                                    ),
                                                     width: 1.2,
                                                   ),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: const Color.fromARGB(
-                                                        255,
-                                                        250,
-                                                        250,
-                                                        250,
-                                                      ).withValues(alpha: 0.25),
+                                                      color:
+                                                          const Color.fromARGB(
+                                                            255,
+                                                            250,
+                                                            250,
+                                                            250,
+                                                          ).withValues(
+                                                            alpha: 0.25,
+                                                          ),
                                                       blurRadius: 12,
                                                     ),
                                                   ],
@@ -191,8 +200,9 @@ class LoginScreen extends StatelessWidget {
                                       child: Container(
                                         height: 44,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(22),
+                                          borderRadius: BorderRadius.circular(
+                                            22,
+                                          ),
                                           border: Border.all(
                                             width: 1,
                                             color: Colors.white,
@@ -209,12 +219,13 @@ class LoginScreen extends StatelessWidget {
                                             child: Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                              ),
+                                                    horizontal: 10,
+                                                  ),
                                               child: Text(
                                                 "Yajman",
                                                 style: TextStyle(
-                                                  color: selectedType == "Yajman"
+                                                  color:
+                                                      selectedType == "Yajman"
                                                       ? Colors.black87
                                                       : Colors.white,
                                                   fontSize: 15,
@@ -238,8 +249,9 @@ class LoginScreen extends StatelessWidget {
                                       child: Container(
                                         height: 44,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(22),
+                                          borderRadius: BorderRadius.circular(
+                                            22,
+                                          ),
                                           border: Border.all(
                                             width: 1,
                                             color: Colors.white,
@@ -256,12 +268,13 @@ class LoginScreen extends StatelessWidget {
                                             child: Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                              ),
+                                                    horizontal: 10,
+                                                  ),
                                               child: Text(
                                                 "Guruji",
                                                 style: TextStyle(
-                                                  color: selectedType == "Guruji"
+                                                  color:
+                                                      selectedType == "Guruji"
                                                       ? Colors.black87
                                                       : Colors.white,
                                                   fontSize: 15,
@@ -284,13 +297,15 @@ class LoginScreen extends StatelessWidget {
                           controller: userNameController,
                           label: "Enter the Phone Number",
                           keyboardType: TextInputType.phone,
-                          prefixIcon: const Icon(Icons.phone, color: Colors.white),
+                          prefixIcon: const Icon(
+                            Icons.phone,
+                            color: Colors.white,
+                          ),
                         ),
+
                         BlocBuilder<LoginBloc, LoginState>(
                           builder: (context, state) {
-                            final isVisible = state is LoginIntialState
-                                ? state.isPasswordVisible
-                                : false;
+                            final isVisible = state.isPasswordVisible;
 
                             return FormTextField(
                               controller: passwordController,
@@ -361,10 +376,25 @@ class LoginScreen extends StatelessWidget {
                             return FamoElevatedButton(
                               text: "Login as $loginType",
                               onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Homescreen(),
+                                final phone = userNameController.text.trim();
+                                final password = passwordController.text.trim();
+
+                                if (phone.isEmpty || password.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "Please enter phone number and password",
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                context.read<LoginBloc>().add(
+                                  LoginButtonPressed(
+                                    username: phone,
+                                    password: password,
+                                    loginType: loginType,
                                   ),
                                 );
                               },
@@ -428,10 +458,7 @@ class LoginScreen extends StatelessWidget {
                                 child: Center(child: buildLogoHeader()),
                               ),
                               const SizedBox(width: 32),
-                              Expanded(
-                                flex: 6,
-                                child: buildFormFields(),
-                              ),
+                              Expanded(flex: 6, child: buildFormFields()),
                             ],
                           ),
                         ),

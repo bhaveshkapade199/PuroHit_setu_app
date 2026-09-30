@@ -719,15 +719,16 @@ class RegisterScreen extends StatelessWidget {
     debugPrint("Veda Shakha: ${state.vedaShakha}");
     debugPrint("======================================");
 
-    // =========================
-    // Send Event
-    // =========================
+    final whatsapp = state.isWhatsappSameAsPhone ||
+            whatsappController.text.trim().isEmpty
+        ? phoneController.text.trim()
+        : whatsappController.text.trim();
 
     context.read<RegisterBloc>().add(
       RegisterUserEvent(
         firstName: firstName,
         middleName: middleName,
-        lastName: lastName,
+        lastName: lastName.isNotEmpty ? lastName : firstName,
 
         gender: state.gender,
         religion: state.religion,
@@ -736,7 +737,7 @@ class RegisterScreen extends StatelessWidget {
 
         dateOfBirth: dobController.text.trim(),
         phone: phoneController.text.trim(),
-        whatsappNumber: whatsappController.text.trim(),
+        whatsappNumber: whatsapp,
         email: emailController.text.trim(),
         password: passwordController.text,
       ),
