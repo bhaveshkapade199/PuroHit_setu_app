@@ -13,4 +13,6 @@ class ApiEndpoint {
   final String forgetPassword = "/api/gurujis/forgot_password";
 
   final String resetPassword = "/api/gurujis/reset_password";
+
+  final String gurujiProfile = "/api/gurujis/guruji_profile";
 }
