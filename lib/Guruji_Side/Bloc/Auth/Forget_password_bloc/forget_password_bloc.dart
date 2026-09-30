@@ -8,19 +8,22 @@ class ForgetPasswordBloc
     extends Bloc<ForgetPasswordEvent, ForgetPasswordState> {
   final AuthRepository _authRepository = AuthRepository();
 
-  // Store verification data for OTP verification
+  // Store verification data for OTP & reset steps
   String? _verificationUid;
+  String? _verificationToken;
   String? _channel;
   String? _destination;
   String? _purpose;
   String? _mobileNum;
 
-  ForgetPasswordBloc() : super(ForgetPassInitialState()) {
+  ForgetPasswordBloc() : super(const ForgetPassInitialState()) {
     on<ForgetPasswordReqEvent>(_onForgetPasswordRequest);
     on<VerifyForgetPasswordOtpEvent>(_onVerifyOtp);
     on<ResendForgetPasswordOtpEvent>(_onResendOtp);
+    on<ResetPasswordSubmitEvent>(_onResetPasswordSubmit);
   }
 
+  // ─── Send OTP ──────────────────────────────────────────────────────────────
   Future<void> _onForgetPasswordRequest(
     ForgetPasswordReqEvent event,
     Emitter<ForgetPasswordState> emit,
@@ -34,7 +37,6 @@ class ForgetPasswordBloc
       );
 
       if (response != null && response.success == true) {
-        // Store verification data for later OTP verification
         _verificationUid = response.verification?.verificationUid ??
             response.data?.verification?.verificationUid;
         _channel = response.verification?.channel ??
@@ -53,21 +55,16 @@ class ForgetPasswordBloc
           mobileNum: event.mobileNum,
         ));
       } else {
-        emit(
-          ForgetPasswordErrorState(
-            response?.message ?? 'Something went wrong',
-          ),
-        );
+        emit(ForgetPasswordErrorState(
+            response?.message ?? 'Something went wrong'));
       }
     } catch (e) {
-      emit(
-        ForgetPasswordErrorState(
-          e.toString().replaceFirst('Exception: ', ''),
-        ),
-      );
+      emit(ForgetPasswordErrorState(
+          e.toString().replaceFirst('Exception: ', '')));
     }
   }
 
+  // ─── Verify OTP ────────────────────────────────────────────────────────────
   Future<void> _onVerifyOtp(
     VerifyForgetPasswordOtpEvent event,
     Emitter<ForgetPasswordState> emit,
@@ -85,25 +82,28 @@ class ForgetPasswordBloc
 
       if (result != null &&
           (result.success == true || result.data?.verified == true)) {
+        // Store token so reset password can use it
+        _verificationToken = result.data?.verificationToken;
+        if (result.data?.verificationUid != null &&
+            result.data!.verificationUid!.isNotEmpty) {
+          _verificationUid = result.data!.verificationUid;
+        }
+
         emit(ForgetPasswordOtpVerifiedState(
-          verificationToken: result.data?.verificationToken,
-          verificationUid: result.data?.verificationUid,
+          verificationToken: _verificationToken,
+          verificationUid: _verificationUid,
           mobileNum: _mobileNum ?? '',
         ));
       } else {
-        emit(const ForgetPasswordErrorState(
-          'Invalid OTP. Please try again.',
-        ));
+        emit(const ForgetPasswordErrorState('Invalid OTP. Please try again.'));
       }
     } catch (e) {
-      emit(
-        ForgetPasswordErrorState(
-          e.toString().replaceFirst('Exception: ', ''),
-        ),
-      );
+      emit(ForgetPasswordErrorState(
+          e.toString().replaceFirst('Exception: ', '')));
     }
   }
 
+  // ─── Resend OTP ────────────────────────────────────────────────────────────
   Future<void> _onResendOtp(
     ResendForgetPasswordOtpEvent event,
     Emitter<ForgetPasswordState> emit,
@@ -117,7 +117,6 @@ class ForgetPasswordBloc
       );
 
       if (response != null && response.success == true) {
-        // Update verification data with new response
         _verificationUid = response.verification?.verificationUid ??
             response.data?.verification?.verificationUid;
         _channel = response.verification?.channel ??
@@ -132,18 +131,48 @@ class ForgetPasswordBloc
 
         emit(const ForgetPasswordOtpResentState());
       } else {
-        emit(
-          ForgetPasswordErrorState(
-            response?.message ?? 'Failed to resend OTP',
-          ),
-        );
+        emit(ForgetPasswordErrorState(
+            response?.message ?? 'Failed to resend OTP'));
       }
     } catch (e) {
-      emit(
-        ForgetPasswordErrorState(
-          e.toString().replaceFirst('Exception: ', ''),
-        ),
+      emit(ForgetPasswordErrorState(
+          e.toString().replaceFirst('Exception: ', '')));
+    }
+  }
+
+  // ─── Reset Password ────────────────────────────────────────────────────────
+  Future<void> _onResetPasswordSubmit(
+    ResetPasswordSubmitEvent event,
+    Emitter<ForgetPasswordState> emit,
+  ) async {
+    emit(const ResetPasswordLoadingState());
+
+    try {
+      final result = await _authRepository.resetPasswordFunction(
+        phone: event.phone.isNotEmpty ? event.phone : (_mobileNum ?? ''),
+        verificationUid: event.verificationUid.isNotEmpty
+            ? event.verificationUid
+            : (_verificationUid ?? ''),
+        newPassword: event.newPassword,
+        confirmPassword: event.confirmPassword,
+        purpose: event.purpose,
+        verificationToken:
+            event.verificationToken ?? _verificationToken,
       );
+
+      if (result != null && result['success'] == true) {
+        emit(ResetPasswordSuccessState(
+          result['message']?.toString() ??
+              'Your password has been reset successfully.',
+        ));
+      } else {
+        emit(ResetPasswordErrorState(
+          result?['message']?.toString() ?? 'Failed to reset password.',
+        ));
+      }
+    } catch (e) {
+      emit(ResetPasswordErrorState(
+          e.toString().replaceFirst('Exception: ', '')));
     }
   }
 }

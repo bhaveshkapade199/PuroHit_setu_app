@@ -28,3 +28,31 @@ class ResendForgetPasswordOtpEvent extends ForgetPasswordEvent {
   @override
   List<Object?> get props => [];
 }
+
+class ResetPasswordSubmitEvent extends ForgetPasswordEvent {
+  final String phone;
+  final String verificationUid;
+  final String newPassword;
+  final String confirmPassword;
+  final String purpose;
+  final String? verificationToken;
+
+  ResetPasswordSubmitEvent({
+    required this.phone,
+    required this.verificationUid,
+    required this.newPassword,
+    required this.confirmPassword,
+    this.purpose = 'guruji_forgot_password',
+    this.verificationToken,
+  });
+
+  @override
+  List<Object?> get props => [
+        phone,
+        verificationUid,
+        newPassword,
+        confirmPassword,
+        purpose,
+        verificationToken,
+      ];
+}

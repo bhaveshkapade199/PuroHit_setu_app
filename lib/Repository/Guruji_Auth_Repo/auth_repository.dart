@@ -378,6 +378,102 @@ class AuthRepository {
       rethrow;
     }
   }
+
+  // Create the function for Reset Password
+  Future<Map<String, dynamic>?> resetPasswordFunction({
+    required String phone,
+    required String verificationUid,
+    required String newPassword,
+    required String confirmPassword,
+    String purpose = "guruji_forgot_password",
+    String? verificationToken,
+  }) async {
+    final resetPassApi = ApiEndpoint().hostUrl + ApiEndpoint().resetPassword;
+
+    debugPrint("========================================");
+    debugPrint("RESET PASSWORD API: $resetPassApi");
+
+    final requestData = {
+      "phone": phone,
+      "verification_uid": verificationUid,
+      "purpose": purpose,
+      "new_password": newPassword,
+      "confirm_password": confirmPassword,
+      if (verificationToken != null && verificationToken.isNotEmpty)
+        "verification_token": verificationToken,
+    };
+
+    debugPrint("RESET PASSWORD REQUEST: ${jsonEncode(requestData)}");
+
+    try {
+      final response = await dio.post(
+        resetPassApi,
+        data: requestData,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+        ),
+      );
+
+      debugPrint("RESET PASSWORD STATUS CODE: ${response.statusCode}");
+      debugPrint("RESET PASSWORD RESPONSE: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data is Map) {
+          final data = Map<String, dynamic>.from(response.data as Map);
+          if (data['success'] == false) {
+            throw Exception(
+              data['message']?.toString() ?? 'Failed to reset password',
+            );
+          }
+          return data;
+        }
+      }
+
+      throw Exception(
+        'Reset password failed with status: ${response.statusCode}',
+      );
+    } on DioException catch (e) {
+      debugPrint("========================================");
+      debugPrint("DIO RESET PASSWORD ERROR");
+      debugPrint("Type: ${e.type}");
+      debugPrint("Message: ${e.message}");
+      debugPrint("Status Code: ${e.response?.statusCode}");
+      debugPrint("Response: ${e.response?.data}");
+      debugPrint("========================================");
+
+      final responseData = e.response?.data;
+      if (responseData is Map) {
+        final message = responseData["message"];
+        final errors = responseData["errors"];
+
+        String? detailedError;
+        if (errors is Map) {
+          final msgs = errors.values
+              .map((v) => v is List ? v.join(", ") : v.toString())
+              .where((s) => s.isNotEmpty)
+              .toList();
+          if (msgs.isNotEmpty) detailedError = msgs.join("\n");
+        } else if (errors is List && errors.isNotEmpty) {
+          detailedError = errors.join(", ");
+        } else if (errors is String && errors.isNotEmpty) {
+          detailedError = errors;
+        }
+
+        final combined = detailedError ?? message?.toString();
+        if (combined != null && combined.isNotEmpty) {
+          throw Exception(combined);
+        }
+      }
+
+      throw Exception(e.message ?? 'Failed to reset password');
+    } catch (e) {
+      debugPrint("Unexpected Reset Password Error: $e");
+      rethrow;
+    }
+  }
 }
 
 

@@ -60,3 +60,25 @@ class ForgetPasswordErrorState extends ForgetPasswordState {
   @override
   List<Object?> get props => [message];
 }
+
+class ResetPasswordLoadingState extends ForgetPasswordState {
+  const ResetPasswordLoadingState();
+}
+
+class ResetPasswordSuccessState extends ForgetPasswordState {
+  final String message;
+
+  const ResetPasswordSuccessState(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ResetPasswordErrorState extends ForgetPasswordState {
+  final String message;
+
+  const ResetPasswordErrorState(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
