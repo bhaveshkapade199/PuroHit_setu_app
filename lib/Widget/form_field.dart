@@ -46,8 +46,8 @@ class FormTextField extends StatelessWidget {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
-            color: Colors.amberAccent,
-            fontWeight: FontWeight.w300,
+            color: Color(0xFF00674f),
+            fontWeight: FontWeight.w400,
           ),
           hintText: hint,
           hintStyle: TextStyle(
@@ -63,7 +63,10 @@ class FormTextField extends StatelessWidget {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Color(0xFFFFE0BD), width: 0.9),
+            borderSide: const BorderSide(
+              color: Color.fromARGB(255, 0, 0, 0),
+              width: 0.9,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
@@ -73,7 +76,7 @@ class FormTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
           ),
         ),
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.black87),
       ),
     );
   }

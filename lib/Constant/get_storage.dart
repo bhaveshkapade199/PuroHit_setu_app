@@ -11,22 +11,6 @@ class StorageService {
     return _storage.read<String>('token');
   }
 
-  void saveUserId(String userId) {
-    _storage.write('user_id', userId);
-  }
-
-  String? getUserId() {
-    return _storage.read<String>('user_id');
-  }
-
-  void savePhone(String phone) {
-    _storage.write('phone', phone);
-  }
-
-  String? getPhone() {
-    return _storage.read<String>('phone');
-  }
-
   void removeToken() {
     _storage.remove('token');
   }

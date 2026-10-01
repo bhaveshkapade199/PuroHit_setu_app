@@ -39,7 +39,7 @@ class FamoElevatedButton extends StatelessWidget {
           // ✨ Golden glow
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFFC107).withValues(alpha: 0.55),
+              color: const Color(0xff66110b).withValues(alpha: 0.55),
               blurRadius: 18,
               spreadRadius: 1,
               offset: const Offset(0, 5),
@@ -57,7 +57,7 @@ class FamoElevatedButton extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFFFFE27A), Color(0xFFFFC107), Color(0xFFE5A900)],
+              colors: [Color(0xff66110b), Color(0xff66110b)],
             ),
           ),
 
@@ -76,7 +76,7 @@ class FamoElevatedButton extends StatelessWidget {
                       maxLines: 1,
                       style: TextStyle(
                         fontSize: fontSize,
-                        color: Colors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
