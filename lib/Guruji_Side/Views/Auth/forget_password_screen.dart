@@ -12,6 +12,7 @@ import 'package:purohitset_app/Guruji_Side/Views/Auth/reset_password_screen.dart
 import 'package:purohitset_app/Widget/common_background.dart';
 import 'package:purohitset_app/Widget/form_button.dart';
 import 'package:purohitset_app/Widget/form_field.dart';
+import 'package:purohitset_app/Widget/rps_custom_painter.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -100,16 +101,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-
     final isLandscape =
         MediaQuery.orientationOf(context) == Orientation.landscape;
-
-    final isTablet = size.width >= 600;
-
-    final logoSize = isLandscape
-        ? (size.height * 0.28).clamp(70.0, 130.0)
-        : (size.height * 0.18).clamp(90.0, 170.0);
 
     return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
       listener: (context, state) {
@@ -120,14 +113,16 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               content: Text(state.response.message ?? 'OTP sent successfully'),
             ),
           );
+
           _showOtpBottomSheet(context);
         }
 
         // OTP verified → close bottom sheet & navigate to reset password
         if (state is ForgetPasswordOtpVerifiedState) {
           if (_isBottomSheetShowing) {
-            Navigator.of(context).pop(); // Close bottom sheet
+            Navigator.of(context).pop();
           }
+
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               Navigator.pushReplacement(
@@ -146,9 +141,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
         // Error → show snackbar
         if (state is ForgetPasswordErrorState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
 
         // OTP resent → show snackbar
@@ -158,99 +153,167 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           );
         }
       },
+
       child: Scaffold(
-        body: CommonBackground(
-          child: SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 480),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isTablet ? 32 : 24,
-                    vertical: isLandscape ? 12 : 24,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(height: isLandscape ? 10 : 20),
-
-                      Image.asset(
-                        'Assets/Images/purohit-setu-logo.webp',
-                        width: logoSize,
-                        height: logoSize,
-                        fit: BoxFit.contain,
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      const AppTitle(title: "Forget Password"),
-
-                      SizedBox(height: isLandscape ? 18 : 32),
-
-                      FormTextField(
-                        label: "Phone Number",
-                        controller: forgetPasswordController,
-                        keyboardType: TextInputType.phone,
-                        prefixIcon: const Icon(
-                          Icons.phone,
-                          color: Colors.white,
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              children: [
+                // ==================================================
+                // LOGO SECTION
+                // ==================================================
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 300,
+                      width: double.infinity,
+                      child: Center(
+                        child: Image(
+                          image: const AssetImage(
+                            "Assets/Images/purohit-setu-logo.webp",
+                          ),
                         ),
                       ),
+                    ),
+                  ],
+                ),
 
-                      const SizedBox(height: 10),
-
-                      BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
-                        builder: (context, state) {
-                          final isLoading = state is ForgetPasswordLoadingState;
-
-                          return FamoElevatedButton(
-                            text: isLoading ? "Please Wait..." : "Send OTP",
-                            onPressed: isLoading
-                                ? null
-                                : () {
-                                    _forgetPassword(context);
-                                  },
-                          );
-                        },
+                // ==================================================
+                // CUSTOM PAINTER / BACKGROUND
+                // ==================================================
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SizedBox(
+                    height: 400,
+                    width: double.infinity,
+                    child: CustomPaint(
+                      painter: RPSCustomPainter(
+                        fillColor: const Color(
+                          0xffcd9933,
+                        ).withValues(alpha: 0.5),
+                        strokeColor: const Color(0xffffd873),
                       ),
-
-                      SizedBox(height: isLandscape ? 20 : 36),
-
-                      InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.arrow_back_sharp, color: Colors.white),
-                            SizedBox(width: 6),
-                            Text(
-                              "Back to Login",
-                              style: TextStyle(
-                                color: Colors.amber,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: isLandscape ? 10 : 20),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
+
+                // ==================================================
+                // FORM CONTENT
+                // ==================================================
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 280),
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight - 288,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // ==================================================
+                              // TITLE
+                              // ==================================================
+                              const AppTitle(title: "Forget Password"),
+
+                              SizedBox(height: isLandscape ? 18 : 32),
+
+                              // ==================================================
+                              // PHONE NUMBER
+                              // ==================================================
+                              FormTextField(
+                                label: "Phone Number",
+                                controller: forgetPasswordController,
+                                keyboardType: TextInputType.phone,
+                                prefixIcon: const Icon(
+                                  Icons.phone,
+                                  color: Color(0xFF00674f),
+                                ),
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              // ==================================================
+                              // SEND OTP BUTTON
+                              // ==================================================
+                              BlocBuilder<
+                                ForgetPasswordBloc,
+                                ForgetPasswordState
+                              >(
+                                builder: (context, state) {
+                                  final isLoading =
+                                      state is ForgetPasswordLoadingState;
+
+                                  return FamoElevatedButton(
+                                    text: isLoading
+                                        ? "Please Wait..."
+                                        : "Send OTP",
+                                    onPressed: isLoading
+                                        ? null
+                                        : () {
+                                            _forgetPassword(context);
+                                          },
+                                  );
+                                },
+                              ),
+
+                              SizedBox(height: isLandscape ? 20 : 36),
+
+                              // ==================================================
+                              // BACK TO LOGIN
+                              // ==================================================
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.arrow_back_sharp,
+                                      color: Color(0xff66110b),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    SizedBox(width: 6),
+                                    Text(
+                                      "Back to Login",
+                                      style: TextStyle(
+                                        color: Color(0xFF00674f),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              SizedBox(height: isLandscape ? 10 : 20),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 }
-
 // ================================================================
 // OTP Bottom Sheet Widget for Forget Password
 // ================================================================
@@ -331,8 +394,8 @@ class _ForgetPasswordOtpSheetState extends State<_ForgetPasswordOtpSheet> {
               isTablet ? 28 : 20,
               isLandscape ? 12 : 20,
             ),
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 12, 9, 7),
+            decoration: BoxDecoration(
+              color: Color(0xFF00674f).withValues(alpha: 0.8),
               borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
             ),
             child: SingleChildScrollView(
@@ -484,8 +547,7 @@ class _ForgetPasswordOtpSheetState extends State<_ForgetPasswordOtpSheet> {
                           onPressed: isVerifying
                               ? null
                               : () {
-                                  final otp =
-                                      widget.otpController.text.trim();
+                                  final otp = widget.otpController.text.trim();
                                   if (otp.length != 6) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

@@ -90,7 +90,7 @@ class LoginScreen extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 280),
+                        padding: const EdgeInsets.only(top: 300),
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
                           keyboardDismissBehavior:
@@ -267,10 +267,11 @@ class LoginScreen extends StatelessWidget {
                                                           ? const Color(
                                                               0xff66110b,
                                                             )
-                                                          : const Color(
-                                                              0xFFFFCD42,
-                                                            ).withValues(
-                                                              alpha: 0.5,
+                                                          : const Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              168,
+                                                              46,
                                                             ),
                                                     ),
                                                     child: Center(
@@ -333,10 +334,11 @@ class LoginScreen extends StatelessWidget {
                                                           ? const Color(
                                                               0xff66110b,
                                                             )
-                                                          : const Color(
-                                                              0xFFFFCD42,
-                                                            ).withValues(
-                                                              alpha: 0.5,
+                                                          : const Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              168,
+                                                              46,
                                                             ),
                                                     ),
                                                     child: Center(
@@ -548,7 +550,7 @@ class LoginScreen extends StatelessWidget {
                                               vertical: 4,
                                             ),
                                             child: Text(
-                                              " Register",
+                                              " New Register",
                                               style: TextStyle(
                                                 color: Color(0xFF00674f),
                                                 fontWeight: FontWeight.w800,

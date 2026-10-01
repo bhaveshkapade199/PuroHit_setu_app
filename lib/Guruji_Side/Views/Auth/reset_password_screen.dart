@@ -8,6 +8,7 @@ import 'package:purohitset_app/Guruji_Side/Views/Auth/login_screen.dart';
 import 'package:purohitset_app/Widget/common_background.dart';
 import 'package:purohitset_app/Widget/form_button.dart';
 import 'package:purohitset_app/Widget/form_field.dart';
+import 'package:purohitset_app/Widget/rps_custom_painter.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String? verificationToken;
@@ -44,18 +45,20 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     context.read<ForgetPasswordBloc>().add(
-          ResetPasswordSubmitEvent(
-            phone: widget.mobileNum ?? '',
-            verificationUid: widget.verificationUid ?? '',
-            verificationToken: widget.verificationToken,
-            newPassword: _newPasswordController.text.trim(),
-            confirmPassword: _confirmPasswordController.text.trim(),
-          ),
-        );
+      ResetPasswordSubmitEvent(
+        phone: widget.mobileNum ?? '',
+        verificationUid: widget.verificationUid ?? '',
+        verificationToken: widget.verificationToken,
+        newPassword: _newPasswordController.text.trim(),
+        confirmPassword: _confirmPasswordController.text.trim(),
+      ),
+    );
   }
 
   Future<void> _showSuccessAndNavigate(
-      BuildContext context, String message) async {
+    BuildContext context,
+    String message,
+  ) async {
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -121,13 +124,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
+   
     final isLandscape =
         MediaQuery.orientationOf(context) == Orientation.landscape;
-    final isTablet = size.width >= 600;
-    final logoSize = isLandscape
-        ? (size.height * 0.22).clamp(60.0, 110.0)
-        : (size.height * 0.16).clamp(80.0, 150.0);
+    
 
     return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
       listener: (context, state) {
@@ -148,175 +148,224 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         }
       },
       child: Scaffold(
-        body: CommonBackground(
-          child: SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 480),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isTablet ? 32 : 24,
-                    vertical: isLandscape ? 12 : 24,
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: isLandscape ? 8 : 20),
-
-                        // Logo
-                        Image.asset(
-                          'Assets/Images/purohit-setu-logo.webp',
-                          width: logoSize,
-                          height: logoSize,
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Title
-                        const AppTitle(title: "Reset Password"),
-
-                        SizedBox(height: isLandscape ? 6 : 10),
-
-                        // Subtitle
-                        Text(
-                          widget.mobileNum != null
-                              ? 'Set a new password for your account\nlinked to ${widget.mobileNum}'
-                              : 'Set a new password for your account',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 13,
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              children: [
+                // ==================================================
+                // LOGO SECTION
+                // ==================================================
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 270,
+                      width: double.infinity,
+                      child: Center(
+                        child: Image(
+                          image: const AssetImage(
+                            "Assets/Images/purohit-setu-logo.webp",
                           ),
                         ),
+                      ),
+                    ),
+                  ],
+                ),
 
-                        SizedBox(height: isLandscape ? 18 : 28),
-
-                        // New Password
-                        FormTextField(
-                          label: "New Password",
-                          controller: _newPasswordController,
-                          obscureText: !_newPasswordVisible,
-                          prefixIcon: const Icon(
-                            Icons.lock_outline,
-                            color: Colors.white,
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _newPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.white70,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _newPasswordVisible = !_newPasswordVisible;
-                              });
-                            },
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Please enter a new password';
-                            }
-                            if (value.trim().length < 8) {
-                              return 'Password must be at least 8 characters';
-                            }
-                            return null;
-                          },
-                        ),
-
-                        // Confirm Password
-                        FormTextField(
-                          label: "Confirm Password",
-                          controller: _confirmPasswordController,
-                          obscureText: !_confirmPasswordVisible,
-                          prefixIcon: const Icon(
-                            Icons.lock_reset,
-                            color: Colors.white,
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _confirmPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.white70,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _confirmPasswordVisible =
-                                    !_confirmPasswordVisible;
-                              });
-                            },
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Please confirm your password';
-                            }
-                            if (value.trim() !=
-                                _newPasswordController.text.trim()) {
-                              return 'Passwords do not match';
-                            }
-                            return null;
-                          },
-                        ),
-
-                        const SizedBox(height: 4),
-
-                        // Reset Button
-                        BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
-                          builder: (context, state) {
-                            final isLoading =
-                                state is ResetPasswordLoadingState;
-                            return FamoElevatedButton(
-                              text: isLoading
-                                  ? 'Resetting...'
-                                  : 'Reset Password',
-                              onPressed: isLoading
-                                  ? null
-                                  : () => _submit(context),
-                            );
-                          },
-                        ),
-
-                        SizedBox(height: isLandscape ? 16 : 28),
-
-                        // Back to Login
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const LoginScreen()),
-                              (route) => false,
-                            );
-                          },
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.arrow_back_sharp, color: Colors.white),
-                              SizedBox(width: 6),
-                              Text(
-                                "Back to Login",
-                                style: TextStyle(
-                                  color: Colors.amber,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: isLandscape ? 8 : 16),
-                      ],
+                // ==================================================
+                // CUSTOM PAINTER / BACKGROUND
+                // ==================================================
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SizedBox(
+                    height: 370,
+                    width: double.infinity,
+                    child: CustomPaint(
+                      painter: RPSCustomPainter(
+                        fillColor: const Color(
+                          0xffcd9933,
+                        ).withValues(alpha: 0.5),
+                        strokeColor: const Color(0xffffd873),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
+
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 280),
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight - 288,
+                          ),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(height: isLandscape ? 8 : 20),
+
+                                // Title
+                                const AppTitle(title: "Reset Password"),
+
+                                // Subtitle
+                                Text(
+                                  widget.mobileNum != null
+                                      ? 'Set a new password for your account\nlinked to ${widget.mobileNum}'
+                                      : 'Set a new password for your account',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                  ),
+                                ),
+
+                                // New Password
+                                FormTextField(
+                                  label: "New Password",
+                                  controller: _newPasswordController,
+                                  obscureText: !_newPasswordVisible,
+                                  prefixIcon: const Icon(
+                                    Icons.lock_outline,
+                                    color: Color(0xFF00674f),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _newPasswordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Color(0xFF00674f),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _newPasswordVisible =
+                                            !_newPasswordVisible;
+                                      });
+                                    },
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return 'Please enter a new password';
+                                    }
+                                    if (value.trim().length < 8) {
+                                      return 'Password must be at least 8 characters';
+                                    }
+                                    return null;
+                                  },
+                                ),
+
+                                // Confirm Password
+                                FormTextField(
+                                  label: "Confirm Password",
+                                  controller: _confirmPasswordController,
+                                  obscureText: !_confirmPasswordVisible,
+                                  prefixIcon: const Icon(
+                                    Icons.lock_reset,
+                                    color: Color(0xFF00674f),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _confirmPasswordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Color(0xFF00674f),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _confirmPasswordVisible =
+                                            !_confirmPasswordVisible;
+                                      });
+                                    },
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return 'Please confirm your password';
+                                    }
+                                    if (value.trim() !=
+                                        _newPasswordController.text.trim()) {
+                                      return 'Passwords do not match';
+                                    }
+                                    return null;
+                                  },
+                                ),
+
+                                const SizedBox(height: 4),
+
+                                // Reset Button
+                                BlocBuilder<
+                                  ForgetPasswordBloc,
+                                  ForgetPasswordState
+                                >(
+                                  builder: (context, state) {
+                                    final isLoading =
+                                        state is ResetPasswordLoadingState;
+                                    return FamoElevatedButton(
+                                      text: isLoading
+                                          ? 'Resetting...'
+                                          : 'Reset Password',
+                                      onPressed: isLoading
+                                          ? null
+                                          : () => _submit(context),
+                                    );
+                                  },
+                                ),
+
+                                SizedBox(height: isLandscape ? 16 : 28),
+
+                                // Back to Login
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const LoginScreen(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  },
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_back_sharp,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 6),
+                                      Text(
+                                        "Back to Login",
+                                        style: TextStyle(
+                                          color: Color(0xFF00674f),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                SizedBox(height: isLandscape ? 8 : 16),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

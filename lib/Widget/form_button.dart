@@ -7,6 +7,12 @@ class FamoElevatedButton extends StatelessWidget {
     required this.onPressed,
     this.size = 48,
     this.fontSize = 16,
+
+    // Optional colors
+    this.backgroundColor,
+    this.textColor,
+    this.borderColor,
+    this.shadowColor,
   });
 
   final String text;
@@ -14,38 +20,47 @@ class FamoElevatedButton extends StatelessWidget {
   final double size;
   final double fontSize;
 
+  // Optional colors
+  final Color? backgroundColor;
+  final Color? textColor;
+  final Color? borderColor;
+  final Color? shadowColor;
+
   @override
   Widget build(BuildContext context) {
+    // Default colors
+    final Color buttonColor = backgroundColor ?? const Color(0xff66110b);
+
+    final Color buttonTextColor = textColor ?? Colors.white;
+
+    final Color buttonBorderColor =
+        borderColor ??
+        const Color.fromARGB(255, 251, 251, 251).withValues(alpha: 0.85);
+
+    final Color buttonShadowColor =
+        shadowColor ?? const Color(0xff66110b).withValues(alpha: 0.55);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 2),
       child: Container(
         width: double.infinity,
         height: size,
-        padding: const EdgeInsets.all(0.7), // Border thickness
+        padding: const EdgeInsets.all(0.7),
+
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
 
-          // ✨ Outer border
-          border: Border.all(
-            color: const Color.fromARGB(
-              255,
-              251,
-              251,
-              251,
-            ).withValues(alpha: 0.85),
-            width: 1,
-          ),
+          // Outer border
+          border: Border.all(color: buttonBorderColor, width: 1),
 
-          // ✨ Golden glow
+          // Shadow
           boxShadow: [
             BoxShadow(
-              color: const Color(0xff66110b).withValues(alpha: 0.55),
+              color: buttonShadowColor,
               blurRadius: 18,
               spreadRadius: 1,
               offset: const Offset(0, 5),
             ),
-
-            // Dark depth
           ],
         ),
 
@@ -53,12 +68,8 @@ class FamoElevatedButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
 
-            // ✨ Golden gradient
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xff66110b), Color(0xff66110b)],
-            ),
+            // Button background
+            color: buttonColor,
           ),
 
           child: Material(
@@ -66,6 +77,7 @@ class FamoElevatedButton extends StatelessWidget {
             child: InkWell(
               onTap: onPressed,
               borderRadius: BorderRadius.circular(30),
+
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -76,7 +88,7 @@ class FamoElevatedButton extends StatelessWidget {
                       maxLines: 1,
                       style: TextStyle(
                         fontSize: fontSize,
-                        color: Colors.white,
+                        color: buttonTextColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

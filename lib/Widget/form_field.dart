@@ -58,15 +58,12 @@ class FormTextField extends StatelessWidget {
           suffixIcon: suffixIcon,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 6,
-            vertical: 8,
+            vertical: 12,
           ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              color: Color.fromARGB(255, 0, 0, 0),
-              width: 0.9,
-            ),
+            borderSide: const BorderSide(color: Color(0xFF00674f), width: 1.5),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),

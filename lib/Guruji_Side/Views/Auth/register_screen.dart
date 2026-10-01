@@ -10,10 +10,10 @@ import 'package:purohitset_app/Guruji_Side/Bloc/Auth/register_bloc/register_even
 import 'package:purohitset_app/Guruji_Side/Bloc/Auth/register_bloc/register_state.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Auth/login_screen.dart';
 
-
 import 'package:purohitset_app/Widget/common_background.dart';
 import 'package:purohitset_app/Widget/form_button.dart';
 import 'package:purohitset_app/Widget/form_field.dart';
+import 'package:purohitset_app/Widget/rps_custom_painter.dart';
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
@@ -60,595 +60,680 @@ class RegisterScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        body: CommonBackground(
-          child: SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final size = MediaQuery.sizeOf(context);
-                final isLandscape =
-                    MediaQuery.orientationOf(context) == Orientation.landscape;
-                final isTablet = size.width >= 600;
-                final logoSize = isLandscape
-                    ? (size.height * 0.24).clamp(80.0, 110.0)
-                    : (size.height * 0.16).clamp(85.0, 150.0);
-
-                return Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 640),
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isTablet
-                            ? 32
-                            : (size.width < 360 ? 14 : 20),
-                        vertical: isLandscape ? 12 : 20,
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              children: [
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 180,
+                      width: double.infinity,
+                      child: Center(
+                        child: Image(
+                          image: const AssetImage(
+                            "Assets/Images/purohit-setu-logo.webp",
+                          ),
+                        ),
                       ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            SizedBox(height: isLandscape ? 6 : 12),
-                            Image.asset(
-                              'Assets/Images/purohit-setu-logo.webp',
-                              width: logoSize,
-                              height: logoSize,
-                              fit: BoxFit.contain,
-                            ),
-                            const SizedBox(height: 6),
-                            const AppTitle(title: "Register"),
-                            SizedBox(height: isLandscape ? 16 : 28),
+                    ),
+                  ],
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SizedBox(
+                    height: 240,
+                    width: double.infinity,
+                    child: CustomPaint(
+                      painter: RPSCustomPainter(
+                        fillColor: const Color(
+                          0xffcd9933,
+                        ).withValues(alpha: 0.5),
+                        strokeColor: const Color.fromARGB(255, 255, 183, 0),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: Align(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 190),
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight - 288,
+                          ),
+                          child: Column(
+                            children: [
+                              AppTitle(title: "Register"),
+                              SizedBox(height: 30),
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    // Full Name
+                                    FormTextField(
+                                      controller: fullnameController,
+                                      label: "Enter Full Name",
+                                      prefixIcon: const Icon(
+                                        Icons.person,
+                                        color: Color(0xFF00674f),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return "Full name is required";
+                                        }
+                                        final parts = value.trim().split(
+                                          RegExp(r'\s+'),
+                                        );
+                                        if (parts.length < 2) {
+                                          return "Please enter at least first and last name (e.g. Bhavesh Kapade)";
+                                        }
+                                        return null;
+                                      },
+                                    ),
 
-                            // Full Name
-                            FormTextField(
-                              controller: fullnameController,
-                              label: "Enter Full Name",
-                              prefixIcon: const Icon(
-                                Icons.person,
-                                color: Colors.white,
+                                    // Gender
+                                    _buildDropdown(
+                                      label: "Select Gender",
+                                      icon: Icons.wc,
+                                      items: const ["Male", "Female", "Other"],
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Please select Gender";
+                                        }
+                                        return null;
+                                      },
+                                      onChanged: (value) {
+                                        debugPrint(
+                                          "UI GENDER SELECTED = [$value]",
+                                        );
+
+                                        context.read<RegisterBloc>().add(
+                                          GenderChangedEvent(value ?? ""),
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 20),
+
+                                    // Date of Birth
+                                    _buildDateField(context),
+
+                                    const SizedBox(height: 20),
+
+                                    BlocBuilder<RegisterBloc, RegisterState>(
+                                      builder: (context, state) {
+                                        return Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: FormTextField(
+                                                    controller: phoneController,
+                                                    label: "Enter Phone Number",
+                                                    prefixIcon: const Icon(
+                                                      Icons.phone,
+                                                      color: Color(0xFF00674f),
+                                                    ),
+                                                    keyboardType:
+                                                        TextInputType.phone,
+                                                    readOnly:
+                                                        state.phoneVerified,
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value
+                                                              .trim()
+                                                              .isEmpty) {
+                                                        return "Phone Number is required";
+                                                      }
+                                                      return null;
+                                                    },
+                                                  ),
+                                                ),
+
+                                                const SizedBox(width: 8),
+
+                                                SizedBox(
+                                                  width: 80,
+                                                  height: 42,
+                                                  child: FamoElevatedButton(
+                                                    backgroundColor:
+                                                        state.phoneVerified
+                                                        ? Color(0xFF00674f)
+                                                        : Color(0xff66110b),
+                                                    shadowColor:
+                                                        state.phoneVerified
+                                                        ? Color(
+                                                            0xFF00674f,
+                                                          ).withValues(
+                                                            alpha: 0.6,
+                                                          )
+                                                        : Color(0xff66110b),
+                                                    text: state.phoneVerified
+                                                        ? "✓"
+                                                        : "Verify",
+                                                    onPressed:
+                                                        state.phoneVerified
+                                                        ? null
+                                                        : () async {
+                                                            final phone =
+                                                                phoneController
+                                                                    .text
+                                                                    .trim();
+                                                            if (phone.isEmpty) {
+                                                              ScaffoldMessenger.of(
+                                                                context,
+                                                              ).showSnackBar(
+                                                                const SnackBar(
+                                                                  content: Text(
+                                                                    "Please enter phone number first",
+                                                                  ),
+                                                                ),
+                                                              );
+                                                              return;
+                                                            }
+                                                            if (phone.length <
+                                                                10) {
+                                                              ScaffoldMessenger.of(
+                                                                context,
+                                                              ).showSnackBar(
+                                                                const SnackBar(
+                                                                  content: Text(
+                                                                    "Please enter a valid 10-digit phone number",
+                                                                  ),
+                                                                ),
+                                                              );
+                                                              return;
+                                                            }
+
+                                                            // First send OTP
+                                                            context
+                                                                .read<
+                                                                  RegisterBloc
+                                                                >()
+                                                                .add(
+                                                                  SendPhoneOtpEvent(
+                                                                    phone,
+                                                                  ),
+                                                                );
+
+                                                            // Open OTP bottom sheet
+                                                            await _showPhoneOtpBottomSheet(
+                                                              context,
+                                                            );
+                                                          },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+
+                                            if (state.phoneVerified)
+                                              Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.verified,
+                                                      color: Colors.green,
+                                                      size: 18,
+                                                    ),
+                                                    SizedBox(width: 4),
+                                                    Text(
+                                                      "Phone Verified",
+                                                      style: TextStyle(
+                                                        color: Colors.green,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+
+                                    BlocBuilder<RegisterBloc, RegisterState>(
+                                      builder: (context, state) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+
+                                          children: [
+                                            Text(
+                                              "Same as whattsApp number",
+                                              style: TextStyle(
+                                                color: Color(0xff66110b),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+
+                                            SizedBox(
+                                              width: 28,
+                                              height: 28,
+                                              child: Checkbox(
+                                                value:
+                                                    state.isWhatsappSameAsPhone,
+                                                activeColor: const Color(
+                                                  0xFFFFD700,
+                                                ),
+                                                checkColor: Colors.black,
+                                                side: const BorderSide(
+                                                  color: Colors.black87,
+                                                  width: 1.5,
+                                                ),
+                                                onChanged: (value) {
+                                                  final isChecked =
+                                                      value ?? false;
+
+                                                  context.read<RegisterBloc>().add(
+                                                    WhatsappSameAsPhoneChangedEvent(
+                                                      isChecked,
+                                                    ),
+                                                  );
+
+                                                  if (isChecked) {
+                                                    whatsappController.text =
+                                                        phoneController.text;
+                                                  } else {
+                                                    whatsappController.clear();
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 10),
+
+                                    // WhatsApp
+                                    BlocBuilder<RegisterBloc, RegisterState>(
+                                      builder: (context, state) {
+                                        return FormTextField(
+                                          controller: whatsappController,
+                                          label: "Enter WhatsApp Number",
+                                          prefixIcon: const Icon(
+                                            Icons.chat,
+                                            color: Color(0xFF00674f),
+                                          ),
+                                          keyboardType: TextInputType.phone,
+
+                                          // Don't allow editing when same as phone
+                                          readOnly: state.isWhatsappSameAsPhone,
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.trim().isEmpty) {
+                                              return "WhattsApp Number is required";
+                                            }
+                                            return null;
+                                          },
+                                        );
+                                      },
+                                    ),
+
+                                    // Email
+                                    BlocBuilder<RegisterBloc, RegisterState>(
+                                      builder: (context, state) {
+                                        return Column(
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: FormTextField(
+                                                    controller: emailController,
+                                                    label: "Enter Your Email",
+                                                    prefixIcon: const Icon(
+                                                      Icons.email,
+                                                      color: Color(0xFF00674f),
+                                                    ),
+                                                    keyboardType: TextInputType
+                                                        .emailAddress,
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value
+                                                              .trim()
+                                                              .isEmpty) {
+                                                        return "Email is required";
+                                                      }
+
+                                                      if (!RegExp(
+                                                        r'^[^@]+@[^@]+\.[^@]+',
+                                                      ).hasMatch(
+                                                        value.trim(),
+                                                      )) {
+                                                        return "Enter a valid email";
+                                                      }
+
+                                                      return null;
+                                                    },
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                SizedBox(
+                                                  width: 80,
+                                                  height: 42,
+                                                  child: FamoElevatedButton(
+                                                    backgroundColor:
+                                                        state.emailVerified
+                                                        ? Color(0xFF00674f)
+                                                        : Color(0xff66110b),
+                                                    text: state.emailVerified
+                                                        ? "✓"
+                                                        : "Verify",
+
+                                                    onPressed:
+                                                        state.emailVerified
+                                                        ? null
+                                                        : () async {
+                                                            final email =
+                                                                emailController
+                                                                    .text
+                                                                    .trim();
+                                                            if (email.isEmpty) {
+                                                              ScaffoldMessenger.of(
+                                                                context,
+                                                              ).showSnackBar(
+                                                                const SnackBar(
+                                                                  content: Text(
+                                                                    "Please enter email first",
+                                                                  ),
+                                                                ),
+                                                              );
+                                                              return;
+                                                            }
+                                                            if (!RegExp(
+                                                              r'^[^@]+@[^@]+\.[^@]+',
+                                                            ).hasMatch(email)) {
+                                                              ScaffoldMessenger.of(
+                                                                context,
+                                                              ).showSnackBar(
+                                                                const SnackBar(
+                                                                  content: Text(
+                                                                    "Please enter a valid email",
+                                                                  ),
+                                                                ),
+                                                              );
+                                                              return;
+                                                            }
+
+                                                            // First send OTP
+                                                            context
+                                                                .read<
+                                                                  RegisterBloc
+                                                                >()
+                                                                .add(
+                                                                  SendEmailOtpEvent(
+                                                                    email,
+                                                                  ),
+                                                                );
+
+                                                            // Open OTP bottom sheet
+                                                            await _showEmailOtpBottomSheet(
+                                                              context,
+                                                            );
+                                                          },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            if (state.emailVerified)
+                                              const Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                    top: 5,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.verified,
+                                                        color:
+                                                            Colors.greenAccent,
+                                                        size: 18,
+                                                      ),
+                                                      SizedBox(width: 4),
+                                                      Text(
+                                                        "Email Verified",
+                                                        style: TextStyle(
+                                                          color: Colors
+                                                              .greenAccent,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+
+                                    // Religion
+                                    _buildDropdown(
+                                      label: "Select Religion",
+                                      icon: Icons.temple_hindu,
+                                      items: const ["Hindu"],
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Please select Religion";
+                                        }
+                                        return null;
+                                      },
+                                      onChanged: (value) {
+                                        debugPrint(
+                                          "UI RELIGION SELECTED = [$value]",
+                                        );
+
+                                        context.read<RegisterBloc>().add(
+                                          ReligionChangedEvent(value ?? ""),
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 20),
+
+                                    // Sampraday
+                                    _buildDropdown(
+                                      label: "Select Sampraday",
+                                      icon: Icons.account_balance,
+                                      items: const [
+                                        "Smarta",
+                                        "Vaishnava",
+                                        "Shaiva",
+                                        "Shakta",
+                                        "Other",
+                                      ],
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Please select Sampraday";
+                                        }
+                                        return null;
+                                      },
+                                      onChanged: (value) {
+                                        debugPrint(
+                                          "UI SAMPRADAY SELECTED = [$value]",
+                                        );
+
+                                        context.read<RegisterBloc>().add(
+                                          SampradayChangedEvent(value ?? ""),
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 20),
+
+                                    // Veda Shakha
+                                    _buildDropdown(
+                                      label: "Select Veda Shakha",
+                                      icon: Icons.menu_book,
+                                      items: const [
+                                        "Krishna Yajurveda",
+                                        "Shukla Yajurveda",
+                                        "Rigveda",
+                                        "Samaveda",
+                                        "Atharvaveda",
+                                      ],
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Please select Veda Shakha";
+                                        }
+                                        return null;
+                                      },
+                                      onChanged: (value) {
+                                        debugPrint(
+                                          "UI VEDA SHAKHA SELECTED = [$value]",
+                                        );
+
+                                        context.read<RegisterBloc>().add(
+                                          VedaShakhaChangedEvent(value ?? ""),
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 20),
+                                    // Password
+                                    BlocBuilder<RegisterBloc, RegisterState>(
+                                      builder: (context, state) {
+                                        return FormTextField(
+                                          controller: passwordController,
+                                          label: "Enter Password",
+                                          prefixIcon: const Icon(
+                                            Icons.lock,
+                                            color: Color(0xFF00674f),
+                                          ),
+                                          obscureText: !state.isPasswordVisible,
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.trim().isEmpty) {
+                                              return "Password is required";
+                                            }
+                                            if (value.trim().length < 8) {
+                                              return "Password must be at least 8 characters";
+                                            }
+                                            return null;
+                                          },
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              state.isPasswordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed: () {
+                                              context.read<RegisterBloc>().add(
+                                                PasswordVisibilityEvent(
+                                                  !state.isPasswordVisible,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+
+                                    // Confirm Password
+                                    BlocBuilder<RegisterBloc, RegisterState>(
+                                      builder: (context, state) {
+                                        return FormTextField(
+                                          controller: confirmPasswordController,
+                                          label: "Enter Confirm Password",
+                                          prefixIcon: const Icon(
+                                            Icons.lock,
+                                            color: Color(0xFF00674f),
+                                          ),
+                                          obscureText: !state.isPasswordVisible,
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.trim().isEmpty) {
+                                              return "Confirm Password is required";
+                                            }
+                                            if (value !=
+                                                passwordController.text) {
+                                              return "Passwords do not match";
+                                            }
+                                            return null;
+                                          },
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              state.isPasswordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed: () {
+                                              context.read<RegisterBloc>().add(
+                                                PasswordVisibilityEvent(
+                                                  !state.isPasswordVisible,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 10),
+
+                                    BlocBuilder<RegisterBloc, RegisterState>(
+                                      builder: (context, state) {
+                                        final isLoading =
+                                            state is RegisterLoadingState;
+                                        return FamoElevatedButton(
+                                          text: isLoading
+                                              ? "Registering..."
+                                              : "Register",
+                                          onPressed: isLoading
+                                              ? null
+                                              : () {
+                                                  _registerUser(context);
+                                                },
+                                        );
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 40),
+                                  ],
+                                ),
                               ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return "Full name is required";
-                                }
-                                final parts = value.trim().split(
-                                  RegExp(r'\s+'),
-                                );
-                                if (parts.length < 2) {
-                                  return "Please enter at least first and last name (e.g. Bhavesh Kapade)";
-                                }
-                                return null;
-                              },
-                            ),
-
-                            // Gender
-                            _buildDropdown(
-                              label: "Select Gender",
-                              icon: Icons.wc,
-                              items: const ["Male", "Female", "Other"],
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Please select Gender";
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                debugPrint("UI GENDER SELECTED = [$value]");
-
-                                context.read<RegisterBloc>().add(
-                                  GenderChangedEvent(value ?? ""),
-                                );
-                              },
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            // Date of Birth
-                            _buildDateField(context),
-
-                            const SizedBox(height: 20),
-
-                            BlocBuilder<RegisterBloc, RegisterState>(
-                              builder: (context, state) {
-                                return Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: FormTextField(
-                                            controller: phoneController,
-                                            label: "Enter Phone Number",
-                                            prefixIcon: const Icon(
-                                              Icons.phone,
-                                              color: Colors.white,
-                                            ),
-                                            keyboardType: TextInputType.phone,
-                                            readOnly: state.phoneVerified,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.trim().isEmpty) {
-                                                return "Phone Number is required";
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-
-                                        const SizedBox(width: 8),
-
-                                        SizedBox(
-                                          width: 80,
-                                          height: 42,
-                                          child: FamoElevatedButton(
-                                            text: state.phoneVerified
-                                                ? "✓"
-                                                : "OTP",
-                                            onPressed: state.phoneVerified
-                                                ? null
-                                                : () async {
-                                                    final phone =
-                                                        phoneController.text
-                                                            .trim();
-                                                    if (phone.isEmpty) {
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                            "Please enter phone number first",
-                                                          ),
-                                                        ),
-                                                      );
-                                                      return;
-                                                    }
-                                                    if (phone.length < 10) {
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                            "Please enter a valid 10-digit phone number",
-                                                          ),
-                                                        ),
-                                                      );
-                                                      return;
-                                                    }
-
-                                                    // First send OTP
-                                                    context
-                                                        .read<RegisterBloc>()
-                                                        .add(
-                                                          SendPhoneOtpEvent(
-                                                            phone,
-                                                          ),
-                                                        );
-
-                                                    // Open OTP bottom sheet
-                                                    await _showPhoneOtpBottomSheet(
-                                                      context,
-                                                    );
-                                                  },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    if (state.phoneVerified)
-                                      const Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: 5),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.verified,
-                                                color: Colors.greenAccent,
-                                                size: 18,
-                                              ),
-                                              SizedBox(width: 4),
-                                              Text(
-                                                "Phone Verified",
-                                                style: TextStyle(
-                                                  color: Colors.greenAccent,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                );
-                              },
-                            ),
-
-                            BlocBuilder<RegisterBloc, RegisterState>(
-                              builder: (context, state) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-
-                                  children: [
-                                    const Text(
-                                      "Same as whattsApp number",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-
-                                    SizedBox(
-                                      width: 28,
-                                      height: 28,
-                                      child: Checkbox(
-                                        value: state.isWhatsappSameAsPhone,
-                                        activeColor: const Color(0xFFFFD700),
-                                        checkColor: Colors.black,
-                                        side: const BorderSide(
-                                          color: Colors.white,
-                                          width: 1.5,
-                                        ),
-                                        onChanged: (value) {
-                                          final isChecked = value ?? false;
-
-                                          context.read<RegisterBloc>().add(
-                                            WhatsappSameAsPhoneChangedEvent(
-                                              isChecked,
-                                            ),
-                                          );
-
-                                          if (isChecked) {
-                                            whatsappController.text =
-                                                phoneController.text;
-                                          } else {
-                                            whatsappController.clear();
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            // WhatsApp
-                            BlocBuilder<RegisterBloc, RegisterState>(
-                              builder: (context, state) {
-                                return FormTextField(
-                                  controller: whatsappController,
-                                  label: "Enter WhatsApp Number",
-                                  prefixIcon: const Icon(
-                                    Icons.chat,
-                                    color: Colors.white,
-                                  ),
-                                  keyboardType: TextInputType.phone,
-
-                                  // Don't allow editing when same as phone
-                                  readOnly: state.isWhatsappSameAsPhone,
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return "WhattsApp Number is required";
-                                    }
-                                    return null;
-                                  },
-                                );
-                              },
-                            ),
-
-                            // Email
-                            BlocBuilder<RegisterBloc, RegisterState>(
-                              builder: (context, state) {
-                                return Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: FormTextField(
-                                            controller: emailController,
-                                            label: "Enter Your Email",
-                                            prefixIcon: const Icon(
-                                              Icons.email,
-                                              color: Colors.white,
-                                            ),
-                                            keyboardType:
-                                                TextInputType.emailAddress,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.trim().isEmpty) {
-                                                return "Email is required";
-                                              }
-
-                                              if (!RegExp(
-                                                r'^[^@]+@[^@]+\.[^@]+',
-                                              ).hasMatch(value.trim())) {
-                                                return "Enter a valid email";
-                                              }
-
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        SizedBox(
-                                          width: 80,
-                                          height: 42,
-                                          child: FamoElevatedButton(
-                                            text: state.emailVerified
-                                                ? "✓"
-                                                : "OTP",
-                                            onPressed: state.emailVerified
-                                                ? null
-                                                : () async {
-                                                    final email =
-                                                        emailController.text
-                                                            .trim();
-                                                    if (email.isEmpty) {
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                            "Please enter email first",
-                                                          ),
-                                                        ),
-                                                      );
-                                                      return;
-                                                    }
-                                                    if (!RegExp(
-                                                      r'^[^@]+@[^@]+\.[^@]+',
-                                                    ).hasMatch(email)) {
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                            "Please enter a valid email",
-                                                          ),
-                                                        ),
-                                                      );
-                                                      return;
-                                                    }
-
-                                                    // First send OTP
-                                                    context
-                                                        .read<RegisterBloc>()
-                                                        .add(
-                                                          SendEmailOtpEvent(
-                                                            email,
-                                                          ),
-                                                        );
-
-                                                    // Open OTP bottom sheet
-                                                    await _showEmailOtpBottomSheet(
-                                                      context,
-                                                    );
-                                                  },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    if (state.emailVerified)
-                                      const Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: 5),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.verified,
-                                                color: Colors.greenAccent,
-                                                size: 18,
-                                              ),
-                                              SizedBox(width: 4),
-                                              Text(
-                                                "Email Verified",
-                                                style: TextStyle(
-                                                  color: Colors.greenAccent,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                );
-                              },
-                            ),
-
-                            // Religion
-                            _buildDropdown(
-                              label: "Select Religion",
-                              icon: Icons.temple_hindu,
-                              items: const ["Hindu"],
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Please select Religion";
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                debugPrint("UI RELIGION SELECTED = [$value]");
-
-                                context.read<RegisterBloc>().add(
-                                  ReligionChangedEvent(value ?? ""),
-                                );
-                              },
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            // Sampraday
-                            _buildDropdown(
-                              label: "Select Sampraday",
-                              icon: Icons.account_balance,
-                              items: const [
-                                "Smarta",
-                                "Vaishnava",
-                                "Shaiva",
-                                "Shakta",
-                                "Other",
-                              ],
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Please select Sampraday";
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                debugPrint("UI SAMPRADAY SELECTED = [$value]");
-
-                                context.read<RegisterBloc>().add(
-                                  SampradayChangedEvent(value ?? ""),
-                                );
-                              },
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            // Veda Shakha
-                            _buildDropdown(
-                              label: "Select Veda Shakha",
-                              icon: Icons.menu_book,
-                              items: const [
-                                "Krishna Yajurveda",
-                                "Shukla Yajurveda",
-                                "Rigveda",
-                                "Samaveda",
-                                "Atharvaveda",
-                              ],
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Please select Veda Shakha";
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                debugPrint(
-                                  "UI VEDA SHAKHA SELECTED = [$value]",
-                                );
-
-                                context.read<RegisterBloc>().add(
-                                  VedaShakhaChangedEvent(value ?? ""),
-                                );
-                              },
-                            ),
-
-                            const SizedBox(height: 20),
-                            // Password
-                            BlocBuilder<RegisterBloc, RegisterState>(
-                              builder: (context, state) {
-                                return FormTextField(
-                                  controller: passwordController,
-                                  label: "Enter Password",
-                                  prefixIcon: const Icon(
-                                    Icons.lock,
-                                    color: Colors.white,
-                                  ),
-                                  obscureText: !state.isPasswordVisible,
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return "Password is required";
-                                    }
-                                    if (value.trim().length < 8) {
-                                      return "Password must be at least 8 characters";
-                                    }
-                                    return null;
-                                  },
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      state.isPasswordVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () {
-                                      context.read<RegisterBloc>().add(
-                                        PasswordVisibilityEvent(
-                                          !state.isPasswordVisible,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-
-                            // Confirm Password
-                            BlocBuilder<RegisterBloc, RegisterState>(
-                              builder: (context, state) {
-                                return FormTextField(
-                                  controller: confirmPasswordController,
-                                  label: "Enter Confirm Password",
-                                  prefixIcon: const Icon(
-                                    Icons.lock,
-                                    color: Colors.white,
-                                  ),
-                                  obscureText: !state.isPasswordVisible,
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return "Confirm Password is required";
-                                    }
-                                    if (value != passwordController.text) {
-                                      return "Passwords do not match";
-                                    }
-                                    return null;
-                                  },
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      state.isPasswordVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () {
-                                      context.read<RegisterBloc>().add(
-                                        PasswordVisibilityEvent(
-                                          !state.isPasswordVisible,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            BlocBuilder<RegisterBloc, RegisterState>(
-                              builder: (context, state) {
-                                final isLoading = state is RegisterLoadingState;
-                                return FamoElevatedButton(
-                                  text: isLoading
-                                      ? "Registering..."
-                                      : "Register",
-                                  onPressed: isLoading
-                                      ? null
-                                      : () {
-                                          _registerUser(context);
-                                        },
-                                );
-                              },
-                            ),
-
-                            const SizedBox(height: 40),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -719,8 +804,8 @@ class RegisterScreen extends StatelessWidget {
     debugPrint("Veda Shakha: ${state.vedaShakha}");
     debugPrint("======================================");
 
-    final whatsapp = state.isWhatsappSameAsPhone ||
-            whatsappController.text.trim().isEmpty
+    final whatsapp =
+        state.isWhatsappSameAsPhone || whatsappController.text.trim().isEmpty
         ? phoneController.text.trim()
         : whatsappController.text.trim();
 
@@ -752,20 +837,24 @@ class RegisterScreen extends StatelessWidget {
     String? Function(String?)? validator,
   }) {
     return DropdownButtonFormField<String>(
-      dropdownColor: Colors.black,
-      style: const TextStyle(color: Colors.white, fontSize: 16),
+      dropdownColor: Color.fromARGB(255, 0, 0, 0).withValues(alpha: 0.9),
+      style: TextStyle(
+        color: Color(0xFF00674f),
+        fontSize: 16,
+        fontWeight: FontWeight.w800,
+      ),
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.amberAccent),
-        prefixIcon: Icon(icon, color: Colors.white),
+        labelStyle: const TextStyle(color: Color(0xFF00674f)),
+        prefixIcon: Icon(icon, color: Color(0xFF00674f)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFFFE0BD), width: 0.9),
+          borderSide: const BorderSide(color: Color(0xFF00674f), width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
-          borderSide: const BorderSide(color: Color(0xFFFFD700), width: 1),
+          borderSide: const BorderSide(color: Color(0xFFFFD700), width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -788,7 +877,7 @@ class RegisterScreen extends StatelessWidget {
     return TextFormField(
       controller: dobController,
       readOnly: true,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Color(0xFF00674f)),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return "Date of Birth is required";
@@ -797,12 +886,12 @@ class RegisterScreen extends StatelessWidget {
       },
       decoration: InputDecoration(
         labelText: "Date of Birth",
-        labelStyle: const TextStyle(color: Colors.amberAccent),
-        prefixIcon: const Icon(Icons.calendar_month, color: Colors.white),
-        suffixIcon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+        labelStyle: const TextStyle(color: Color(0xFF00674f)),
+        prefixIcon: const Icon(Icons.calendar_month, color: Color(0xFF00674f)),
+        suffixIcon: const Icon(Icons.arrow_drop_down, color: Color(0xFF00674f)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.white54),
+          borderSide: const BorderSide(color: Color(0xFF00674f)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -1035,8 +1124,8 @@ class _OtpBottomSheetContentState extends State<_OtpBottomSheetContent> {
                 isTablet ? 28 : 20,
                 isLandscape ? 12 : 20,
               ),
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 12, 9, 7),
+              decoration: BoxDecoration(
+                color: Color(0xFF00674f).withValues(alpha: 0.8),
                 borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
               ),
               child: SingleChildScrollView(

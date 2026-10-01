@@ -1,14 +1,13 @@
+
 name: purohitset_app
 description: "A new Flutter project."
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
+publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
   sdk: ^3.10.7
-
 
 dependencies:
   flutter:
@@ -22,7 +21,6 @@ dependencies:
   equatable: ^3.0.0
   dio: ^5.11.1
   multi_dropdown: ^3.2.2
- 
   circle_nav_bar: ^2.2.0
   pinput: ^6.0.2
 
@@ -30,23 +28,19 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
   flutter_lints: ^6.0.0
-
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
-
-
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
   assets:
     - Assets/Images/
     - Assets/Gif/
-  
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/to/resolution-aware-images
 
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
-
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "Assets/Images/purohit-setu-logo.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
