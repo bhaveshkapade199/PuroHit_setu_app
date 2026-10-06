@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigation_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigationbar_event.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigationbar_state.dart';
+
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/booking_history_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/chatting_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/profile_screen.dart';
@@ -21,8 +22,10 @@ class Homescreen extends StatelessWidget {
     return BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
       builder: (context, state) {
         final size = MediaQuery.sizeOf(context);
+
         final isLandscape =
             MediaQuery.orientationOf(context) == Orientation.landscape;
+
         final appBarHeight = isLandscape ? 56.0 : 64.0;
 
         return PopScope(
@@ -36,45 +39,47 @@ class Homescreen extends StatelessWidget {
               );
             }
           },
-          child: SafeArea(
-            top: true,
-            left: true,
-            right: true,
-            bottom: true,
-            child: Scaffold(
-              // Attach key to Scaffold
-              key: scaffoldKey,
+          child: Scaffold(
+            // ------------------------------------------------
+            // SCAFFOLD KEY
+            // ------------------------------------------------
+            key: scaffoldKey,
 
-              backgroundColor: const Color(0xFFFFF5EA),
+            backgroundColor: const Color(0xFFFFF5EA),
 
-              // ------------------------------------------------
-              // APP BAR
-              // ------------------------------------------------
-              appBar: state.currentIndex == 0
-                  ? PreferredSize(
-                      preferredSize: Size(double.infinity, appBarHeight),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFD3A1).withValues(alpha: 0.8),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 8,
-                              spreadRadius: 1,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
+            // ------------------------------------------------
+            // APP BAR
+            // ------------------------------------------------
+            appBar: state.currentIndex == 0
+                ? PreferredSize(
+                    preferredSize: Size(
+                      double.infinity,
+                      appBarHeight + MediaQuery.of(context).padding.top,
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFD3A1).withValues(alpha: 0.8),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: SafeArea(
+                        bottom: false,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
-                            vertical: 4,
+                            vertical: 10,
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               // ------------------------------------------------
-                              // DRAWER MENU BUTTON
+                              // LOGO
                               // ------------------------------------------------
                               Image.asset(
                                 'Assets/Images/purohit-setu-logo.webp',
@@ -82,6 +87,7 @@ class Homescreen extends StatelessWidget {
                                 width: isLandscape ? 44 : 50,
                                 fit: BoxFit.contain,
                               ),
+
                               const SizedBox(width: 8),
 
                               // ------------------------------------------------
@@ -133,6 +139,10 @@ class Homescreen extends StatelessWidget {
                                   size: 20,
                                 ),
                               ),
+
+                              // ------------------------------------------------
+                              // MENU
+                              // ------------------------------------------------
                               IconButton(
                                 onPressed: () {
                                   scaffoldKey.currentState?.openDrawer();
@@ -147,301 +157,333 @@ class Homescreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                    )
-                  : null,
-
-              drawer: Drawer(
-                width: (size.width * 0.75).clamp(260.0, 320.0),
-
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    DrawerHeader(
-                      margin: EdgeInsets.zero,
-                      padding: const EdgeInsets.all(20),
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 235, 156, 10),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: 65,
-                                width: 65,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                padding: const EdgeInsets.all(5),
-                                child: Image.asset(
-                                  'Assets/Images/purohit-setu-logo.webp',
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-
-                              const SizedBox(height: 10),
-
-                              const Text(
-                                "Purohitsetu",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Icon(
-                              Icons.close,
-                              size: 28,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
+                  )
+                : null,
 
-                    Column(
+            // ------------------------------------------------
+            // DRAWER
+            // ------------------------------------------------
+            drawer: Drawer(
+              width: (size.width * 0.75).clamp(260.0, 320.0),
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  DrawerHeader(
+                    margin: EdgeInsets.zero,
+                    padding: const EdgeInsets.all(20),
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 235, 156, 10),
+                    ),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ListTile(
-                          leading: const Icon(
-                            Icons.home_rounded,
-                            color: Color(0xFFEB4A0A),
-                          ),
-                          title: const Text(
-                            "Home",
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-
-                            context.read<BottomNavigationBloc>().add(
-                              const BottomNavigationTabChanged(0),
-                            );
-                          },
-                        ),
-
-                        // ------------------------------------------------
-                        // PROFILE
-                        // ------------------------------------------------
-                        ListTile(
-                          leading: const Icon(
-                            Icons.person_rounded,
-                            color: Color(0xFFEB4A0A),
-                          ),
-                          title: const Text(
-                            "Profile",
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-
-                            context.read<BottomNavigationBloc>().add(
-                              const BottomNavigationTabChanged(4),
-                            );
-                          },
-                        ),
-
-                        // ------------------------------------------------
-                        // SETTINGS
-                        // ------------------------------------------------
-                        ListTile(
-                          leading: const Icon(
-                            Icons.settings_rounded,
-                            color: Color(0xFFEB4A0A),
-                          ),
-                          title: const Text(
-                            "Settings",
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-
-                            // Navigate to Settings screen here
-                          },
-                        ),
-
-                        // ------------------------------------------------
-                        // ABOUT
-                        // ------------------------------------------------
-                        ListTile(
-                          leading: const Icon(
-                            Icons.info_outline_rounded,
-                            color: Color(0xFFEB4A0A),
-                          ),
-                          title: const Text(
-                            "About Us",
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-
-                            // Navigate to About screen here
-                          },
-                        ),
-
-                        // ------------------------------------------------
-                        // HELP
-                        // ------------------------------------------------
-                        ListTile(
-                          leading: const Icon(
-                            Icons.help_outline_rounded,
-                            color: Color(0xFFEB4A0A),
-                          ),
-                          title: const Text(
-                            "Help & Support",
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-
-                            // Navigate to Help screen here
-                          },
-                        ),
-                        const Divider(),
-
-                        ListTile(
-                          leading: const Icon(
-                            Icons.logout_rounded,
-                            color: Colors.red,
-                          ),
-                          title: const Text(
-                            "Logout",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.w600,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 65,
+                              width: 65,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              padding: const EdgeInsets.all(5),
+                              child: Image.asset(
+                                'Assets/Images/purohit-setu-logo.webp',
+                                fit: BoxFit.contain,
+                              ),
                             ),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
 
-                            // Logout functionality
+                            const SizedBox(height: 10),
+
+                            const Text(
+                              "Purohitsetu",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // CLOSE BUTTON
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
                           },
+                          icon: const Icon(
+                            Icons.close,
+                            size: 28,
+                            color: Colors.black,
+                          ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
 
-              // ------------------------------------------------
-              // BODY
-              // ------------------------------------------------
-              body: IndexedStack(
-                index: state.currentIndex,
-                children: const [
-                  HomeTab(),
-                  BookingHistoryScreen(),
-                  ReelsScreen(),
-                  ChattingScreen(),
-                  ProfileScreen(),
+                  // ------------------------------------------------
+                  // HOME
+                  // ------------------------------------------------
+                  ListTile(
+                    leading: const Icon(
+                      Icons.home_rounded,
+                      color: Color(0xFFEB4A0A),
+                    ),
+                    title: const Text(
+                      "Home",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      context.read<BottomNavigationBloc>().add(
+                        const BottomNavigationTabChanged(0),
+                      );
+                    },
+                  ),
+
+                  // ------------------------------------------------
+                  // PROFILE
+                  // ------------------------------------------------
+                  ListTile(
+                    leading: const Icon(
+                      Icons.person_rounded,
+                      color: Color(0xFFEB4A0A),
+                    ),
+                    title: const Text(
+                      "Profile",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      context.read<BottomNavigationBloc>().add(
+                        const BottomNavigationTabChanged(4),
+                      );
+                    },
+                  ),
+
+                  // ------------------------------------------------
+                  // SETTINGS
+                  // ------------------------------------------------
+                  ListTile(
+                    leading: const Icon(
+                      Icons.settings_rounded,
+                      color: Color(0xFFEB4A0A),
+                    ),
+                    title: const Text(
+                      "Settings",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      // Navigate to Settings screen here
+                    },
+                  ),
+
+                  // ------------------------------------------------
+                  // ABOUT
+                  // ------------------------------------------------
+                  ListTile(
+                    leading: const Icon(
+                      Icons.info_outline_rounded,
+                      color: Color(0xFFEB4A0A),
+                    ),
+                    title: const Text(
+                      "About Us",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      // Navigate to About screen here
+                    },
+                  ),
+
+                  // ------------------------------------------------
+                  // HELP
+                  // ------------------------------------------------
+                  ListTile(
+                    leading: const Icon(
+                      Icons.help_outline_rounded,
+                      color: Color(0xFFEB4A0A),
+                    ),
+                    title: const Text(
+                      "Help & Support",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      // Navigate to Help screen here
+                    },
+                  ),
+
+                  const Divider(),
+
+                  // ------------------------------------------------
+                  // LOGOUT
+                  // ------------------------------------------------
+                  ListTile(
+                    leading: const Icon(
+                      Icons.logout_rounded,
+                      color: Colors.red,
+                    ),
+                    title: const Text(
+                      "Logout",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      // Logout functionality
+                    },
+                  ),
                 ],
               ),
+            ),
 
-              // ------------------------------------------------
-              // BOTTOM NAVIGATION
-              // ------------------------------------------------
-              bottomNavigationBar: CircleNavBar(
-                activeIndex: state.currentIndex,
+            // ------------------------------------------------
+            // BODY
+            // ------------------------------------------------
+            body: IndexedStack(
+              index: state.currentIndex,
+              children: const [
+                HomeTab(),
+                BookingHistoryScreen(),
+                ReelsScreen(),
+                ChattingScreen(),
+                ProfileScreen(),
+              ],
+            ),
 
-                activeIcons: const [
-                  _NavItem(
-                    icon: Icons.home_rounded,
-                    label: "Home",
-                    isActive: true,
-                  ),
+            // ------------------------------------------------
+            // BOTTOM NAVIGATION
+            // ------------------------------------------------
+            bottomNavigationBar: SafeArea(
+              top: false,
+              bottom: true,
 
-                  _NavItem(
-                    icon: Icons.book_online_sharp,
-                    label: "Booking",
-                    isActive: true,
-                  ),
+              // 👇 Bottom side padding
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 0),
 
-                  _NavItem(
-                    icon: Icons.mobile_screen_share_outlined,
-                    label: "Reels",
-                    isActive: true,
-                  ),
+                child: CircleNavBar(
+                  activeIndex: state.currentIndex,
 
-                  _NavItem(
-                    icon: Icons.chat_bubble_rounded,
-                    label: "Chat",
-                    isActive: true,
-                  ),
-
-                  _NavItem(
-                    icon: Icons.person_rounded,
-                    label: "Profile",
-                    isActive: true,
-                  ),
-                ],
-
-                inactiveIcons: const [
-                  _NavItem(icon: Icons.home_rounded, label: "Home"),
-
-                  _NavItem(icon: Icons.book_online_sharp, label: "Booking"),
-
-                  _NavItem(
-                    icon: Icons.mobile_screen_share_outlined,
-                    label: "Reels",
-                  ),
-
-                  _NavItem(
-                    icon: Icons.chat_bubble_outline_outlined,
-                    label: "Chat",
-                  ),
-
-                  _NavItem(icon: Icons.person_rounded, label: "Profile"),
-                ],
-
-                color: Colors.black,
-
-                circleColor: Colors.white,
-
-                height: isLandscape ? 54 : 65,
-
-                circleWidth: isLandscape ? 50 : 60,
-
-                cornerRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    const Color(0xFFFFD3A1).withValues(alpha: 0.8),
-                    const Color(0xFFFFD3A1).withValues(alpha: 0.8),
+                  // ------------------------------------------------
+                  // ACTIVE ICONS
+                  // ------------------------------------------------
+                  activeIcons: const [
+                    _NavItem(
+                      icon: Icons.home_rounded,
+                      label: "Home",
+                      isActive: true,
+                    ),
+                    _NavItem(
+                      icon: Icons.book_online_sharp,
+                      label: "Booking",
+                      isActive: true,
+                    ),
+                    _NavItem(
+                      icon: Icons.mobile_screen_share_outlined,
+                      label: "Reels",
+                      isActive: true,
+                    ),
+                    _NavItem(
+                      icon: Icons.chat_bubble_rounded,
+                      label: "Chat",
+                      isActive: true,
+                    ),
+                    _NavItem(
+                      icon: Icons.person_rounded,
+                      label: "Profile",
+                      isActive: true,
+                    ),
                   ],
-                ),
 
-                circleGradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFB35C2D),
-                    Color(0xFFEB4A0A),
-                    Color(0xFFC73700),
+                  // ------------------------------------------------
+                  // INACTIVE ICONS
+                  // ------------------------------------------------
+                  inactiveIcons: const [
+                    _NavItem(icon: Icons.home_rounded, label: "Home"),
+                    _NavItem(icon: Icons.book_online_sharp, label: "Booking"),
+                    _NavItem(
+                      icon: Icons.mobile_screen_share_outlined,
+                      label: "Reels",
+                    ),
+                    _NavItem(
+                      icon: Icons.chat_bubble_outline_outlined,
+                      label: "Chat",
+                    ),
+                    _NavItem(icon: Icons.person_rounded, label: "Profile"),
                   ],
-                ),
 
-                onTap: (index) {
-                  context.read<BottomNavigationBloc>().add(
-                    BottomNavigationTabChanged(index),
-                  );
-                },
+                  // ------------------------------------------------
+                  // NAVIGATION COLORS
+                  // ------------------------------------------------
+                  color: Colors.black,
+
+                  circleColor: Colors.white,
+
+                  // ------------------------------------------------
+                  // NAVIGATION SIZE
+                  // ------------------------------------------------
+                  height: isLandscape ? 54 : 65,
+
+                  circleWidth: isLandscape ? 50 : 60,
+
+                  // ------------------------------------------------
+                  // CORNER RADIUS
+                  // ------------------------------------------------
+                  cornerRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+
+                  // ------------------------------------------------
+                  // MAIN GRADIENT
+                  // ------------------------------------------------
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color(0xFFFFD3A1).withValues(alpha: 0.8),
+                      const Color(0xFFFFD3A1).withValues(alpha: 0.8),
+                    ],
+                  ),
+
+                  // ------------------------------------------------
+                  // ACTIVE CIRCLE GRADIENT
+                  // ------------------------------------------------
+                  circleGradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFB35C2D),
+                      Color(0xFFEB4A0A),
+                      Color(0xFFC73700),
+                    ],
+                  ),
+
+                  // ------------------------------------------------
+                  // ON TAP
+                  // ------------------------------------------------
+                  onTap: (index) {
+                    context.read<BottomNavigationBloc>().add(
+                      BottomNavigationTabChanged(index),
+                    );
+                  },
+                ),
               ),
             ),
           ),

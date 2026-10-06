@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/Auth/Forget_password_bloc/forget_password_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigation_bloc.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profile/guruji_profile_bloc.dart';
+import 'package:purohitset_app/Guruji_Side/Views/Homescreen/homescreen.dart';
 
 import 'package:purohitset_app/Repository/Guruji_Auth_Repo/auth_repository.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/Auth/login_bloc/login_bloc.dart';
@@ -16,6 +19,8 @@ void main() async {
 
   final authRepository = AuthRepository();
 
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -23,6 +28,7 @@ void main() async {
         BlocProvider(create: (_) => RegisterBloc(authRepository)),
         BlocProvider(create: (_) => BottomNavigationBloc()),
         BlocProvider(create: (_) => ForgetPasswordBloc()),
+        BlocProvider(create: (_) => GurujiProfileBloc(authRepository)),
       ],
       child: const MyApp(),
     ),

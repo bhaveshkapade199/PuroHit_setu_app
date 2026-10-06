@@ -14,5 +14,5 @@ class ApiEndpoint {
 
   final String resetPassword = "/api/gurujis/reset_password";
 
-  final String gurujiProfile = "/api/gurujis/guruji_profile";
+  final String gurujiProfile = "/guruji_profile";
 }

@@ -465,11 +465,33 @@ class LoginScreen extends StatelessWidget {
                                     BlocBuilder<LoginBloc, LoginState>(
                                       builder: (context, state) {
                                         if (state is LoginLoadingState) {
-                                          return const SizedBox(
+                                          return Container(
+                                            width: double.infinity,
                                             height: 48,
+                                            padding: const EdgeInsets.all(0.7),
+
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+
+                                              // Outer border
+                                              border: Border.all(
+                                                color: const Color.fromARGB(
+                                                  255,
+                                                  251,
+                                                  251,
+                                                  251,
+                                                ).withValues(alpha: 0.85),
+                                                width: 1,
+                                              ),
+
+                                              color: const Color(
+                                                0xff66110b,
+                                              ).withValues(alpha: 0.55),
+                                            ),
                                             child: Center(
                                               child: CircularProgressIndicator(
-                                                color: Color(0xFFFFCD42),
+                                                color: Colors.amber,
                                               ),
                                             ),
                                           );

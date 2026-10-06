@@ -551,8 +551,21 @@ class AuthRepository {
 
       final responseData = e.response?.data;
 
-      if (responseData is Map && responseData["message"] != null) {
-        throw Exception(responseData["message"].toString());
+      if (responseData is Map) {
+        if (responseData["errors"] != null) {
+          final errors = responseData["errors"];
+          if (errors is Map) {
+            final errorMessages = errors.values.expand((element) => element is List ? element : [element]).join(", ");
+            if (errorMessages.isNotEmpty) {
+              throw Exception(errorMessages);
+            }
+          } else if (errors is List && errors.isNotEmpty) {
+            throw Exception(errors.join(", "));
+          }
+        }
+        if (responseData["message"] != null) {
+          throw Exception(responseData["message"].toString());
+        }
       }
 
       throw Exception(e.message ?? "Failed to fetch Guruji profile");
