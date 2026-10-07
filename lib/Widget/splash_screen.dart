@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/SplashScreens/splash_screen_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/SplashScreens/splash_screen_event.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/SplashScreens/splash_screen_state.dart';
+import 'package:purohitset_app/Constant/app_translations.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Auth/login_screen.dart';
+import 'package:purohitset_app/Guruji_Side/Views/Homescreen/homescreen.dart';
 import 'package:purohitset_app/Widget/onboarding_screen.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -16,14 +18,17 @@ class SplashScreen extends StatelessWidget {
       create: (context) => SplashBloc()..add(SplashStarted()),
       child: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
-          if (state is SplashCompleted) {
+          if (state is SplashAuthenticated) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Homescreen()),
+            );
+          } else if (state is SplashCompleted) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const LoginScreen()),
             );
-          }
-
-          if (state is SplashShowOnboarding) {
+          } else if (state is SplashShowOnboarding) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const OnboardingScreen()),
@@ -53,7 +58,7 @@ class SplashScreen extends StatelessWidget {
                   top: false,
                   child: Center(
                     child: AnimateText(
-                      "Connect with Trusted Purohits!",
+                      AppTranslations.tr('splash_tagline'),
                       style: const TextStyle(
                         fontSize: 22,
                         color: Color(0xFF00674f),
