@@ -11,6 +11,8 @@ abstract class GurujiProfileState extends Equatable {
 // Initial State
 class GurujiProfileInitialState extends GurujiProfileState {}
 
+
+
 // Loading State
 class GurujiProfileLoadingState extends GurujiProfileState {}
 

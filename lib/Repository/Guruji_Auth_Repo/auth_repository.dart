@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:purohitset_app/Constant/get_storage.dart';
+import 'package:purohitset_app/Guruji_Side/Model/Auth/change_password_model.dart';
 import 'package:purohitset_app/Guruji_Side/Model/Auth/forget_password_model.dart';
 import 'package:purohitset_app/Guruji_Side/Model/Auth/guruji_login_model.dart';
 import 'package:purohitset_app/Guruji_Side/Model/Auth/guruji_profile_model.dart';
+import 'package:purohitset_app/Guruji_Side/Model/Auth/guruji_profile_update_model.dart';
 import 'package:purohitset_app/Guruji_Side/Model/Auth/guruji_register_model.dart';
 import 'package:purohitset_app/Constant/api_endpoint.dart';
 import 'package:purohitset_app/Guruji_Side/Model/Auth/send_OTP_model.dart';
@@ -35,7 +37,7 @@ class AuthRepository {
     String? emailVerificationToken,
     String otpPurpose = "guruji_registration",
   }) async {
-    final registerApi = ApiEndpoint().baseUrl + ApiEndpoint().gurujiRegApi;
+    final registerApi = ApiEndpoint().hostUrl + ApiEndpoint().gurujiRegApi;
 
     debugPrint("========================================");
     debugPrint("REGISTER API: $registerApi");
@@ -187,7 +189,7 @@ class AuthRepository {
   //Create the function for the login
 
   Future<GurujiLoginModel?> login(String phoneNum, String password) async {
-    final loginApi = ApiEndpoint().baseUrl + ApiEndpoint().gurujiLogin;
+    final loginApi = ApiEndpoint().hostUrl + ApiEndpoint().gurujiLogin;
 
     debugPrint('Login API: $loginApi');
 
@@ -195,40 +197,82 @@ class AuthRepository {
       final response = await dio.post(
         loginApi,
         data: {'phone': phoneNum, 'password': password},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
       );
 
       debugPrint('Login Response Code: ${response.statusCode}');
       debugPrint('Login Response: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Save token
-        final model = GurujiLoginModel.fromJson(response.data);
+        if (response.data is Map) {
+          final data = Map<String, dynamic>.from(response.data as Map);
 
-        final token = model.authentication?.accessToken;
+          if (data['success'] == false) {
+            final msg = data['message'] ?? 'Login failed';
+            throw Exception(msg.toString());
+          }
 
-        if (token != null && token.isNotEmpty) {
-          final storage = StorageService();
+          final model = GurujiLoginModel.fromJson(data);
+          final token = model.authentication?.accessToken;
 
-          storage.saveToken(token);
+          if (token != null && token.isNotEmpty) {
+            final storage = StorageService();
+            storage.saveToken(token);
+            debugPrint("Token saved successfully");
+          } else {
+            debugPrint("Warning: Token is null or empty in login response");
+          }
 
-          debugPrint("Token saved successfully");
+          return model;
         }
-
-        return model;
       }
+
+      throw Exception('Login failed. Status: ${response.statusCode}');
     } on DioException catch (e) {
       debugPrint('Dio Error Type: ${e.type}');
       debugPrint('Dio Error Message: ${e.message}');
       debugPrint('Status Code: ${e.response?.statusCode}');
       debugPrint('Response: ${e.response?.data}');
 
-      // Don't convert network errors into "invalid credentials".
-      rethrow;
+      final responseData = e.response?.data;
+      if (responseData is Map) {
+        final message = responseData['message'];
+        final error = responseData['error'];
+        final errors = responseData['errors'];
+
+        String? detailedError;
+        if (errors is Map) {
+          final msgs = errors.values
+              .map((v) => v is List ? v.join(", ") : v.toString())
+              .where((s) => s.isNotEmpty)
+              .toList();
+          if (msgs.isNotEmpty) detailedError = msgs.join("\n");
+        } else if (errors is List && errors.isNotEmpty) {
+          detailedError = errors.join(", ");
+        } else if (errors is String && errors.isNotEmpty) {
+          detailedError = errors;
+        }
+
+        final combined = detailedError ?? message?.toString() ?? error?.toString();
+        if (combined != null && combined.isNotEmpty) {
+          throw Exception(combined);
+        }
+      }
+
+      if (e.response?.statusCode == 401) {
+        throw Exception('Invalid phone number or password. Please try again.');
+      }
+
+      throw Exception(e.message ?? 'Login failed. Please try again.');
     } catch (e) {
       debugPrint('Unexpected Login Error: $e');
       rethrow;
     }
-    return null;
   }
 
   // Create the function for sending OTP (phone or email)
@@ -494,25 +538,13 @@ class AuthRepository {
   //Now Create the function for the fetch of Guruji Detail
 
   Future<GurujiProfileInfoModel> getGurujiDetail() async {
-    final String fetchDetailApi =
-        ApiEndpoint().baseUrl + ApiEndpoint().gurujiProfile;
+    final fetchDetailApi = ApiEndpoint().hostUrl + ApiEndpoint().gurujiProfile;
 
-    // Get token from GetStorage
     final storage = StorageService();
-
-    final String? token = storage.getToken();
+    final token = storage.getToken();
 
     if (token == null || token.isEmpty) {
-      throw Exception("Authentication token not found.");
-    }
-
-    debugPrint("================================");
-    debugPrint("Guruji Profile API: $fetchDetailApi");
-    debugPrint("Token Available: true");
-    debugPrint("================================");
-
-    if (token.isEmpty) {
-      throw Exception("Authentication token not found.");
+      throw Exception('Authentication token not found. Please login again.');
     }
 
     try {
@@ -520,55 +552,200 @@ class AuthRepository {
         fetchDetailApi,
         options: Options(
           headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": "Bearer $token",
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
           },
         ),
       );
 
-      debugPrint("PROFILE STATUS CODE: ${response.statusCode}");
+      debugPrint('PROFILE STATUS CODE: ${response.statusCode}');
 
-      debugPrint("PROFILE RESPONSE: ${response.data}");
+      if (response.data is! Map) {
+        throw Exception('Invalid profile API response format.');
+      }
 
-      if (response.statusCode == 200) {
-        return GurujiProfileInfoModel.fromJson(response.data);
+      final json = Map<String, dynamic>.from(response.data as Map);
+
+      debugPrint('PROFILE SUCCESS: ${json['success']}');
+      debugPrint('PROFILE MESSAGE: ${json['message']}');
+
+      if (response.statusCode == 200 && json['success'] == true) {
+        return GurujiProfileInfoModel.fromJson(json);
       }
 
       throw Exception(
-        "Failed to fetch Guruji profile. "
-        "Status code: ${response.statusCode}",
+        json['message']?.toString() ?? 'Failed to fetch Guruji profile.',
       );
     } on DioException catch (e) {
-      debugPrint("================================");
-      debugPrint("DIO PROFILE ERROR");
-      debugPrint("Type: ${e.type}");
-      debugPrint("Message: ${e.message}");
-      debugPrint("Status Code: ${e.response?.statusCode}");
-      debugPrint("Response: ${e.response?.data}");
-      debugPrint("Request URL: ${e.requestOptions.uri}");
-      debugPrint("================================");
+      debugPrint('PROFILE API ERROR: ${e.message}');
+      debugPrint('PROFILE STATUS: ${e.response?.statusCode}');
+      debugPrint('PROFILE ERROR RESPONSE: ${e.response?.data}');
+
+      final data = e.response?.data;
+
+      if (data is Map && data['message'] != null) {
+        throw Exception(data['message'].toString());
+      }
+
+      throw Exception(e.message ?? 'Failed to fetch Guruji profile.');
+    } catch (e, stackTrace) {
+      debugPrint('PROFILE PARSING ERROR: $e');
+      debugPrint('PROFILE STACKTRACE: $stackTrace');
+      rethrow;
+    }
+  }
+
+  // Guruji Change Password function
+  Future<ChangePasswordModel> changePasswordFunction(
+    String currentPassword,
+    String newPassword,
+    String confirmPassword,
+  ) async {
+    final String changePasswordApi =
+        ApiEndpoint().hostUrl + ApiEndpoint().changePassword;
+
+    debugPrint('Change Password API: $changePasswordApi');
+
+    final storage = StorageService();
+    final token = storage.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Authentication token not found. Please login again.');
+    }
+
+    try {
+      final Response response = await dio.post(
+        changePasswordApi,
+        data: {
+          "current_password": currentPassword,
+          "new_password": newPassword,
+          "confirm_password": confirmPassword,
+        },
+        options: Options(
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Change Password Response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        return ChangePasswordModel.fromJson(response.data);
+      }
+
+      throw Exception('Failed to change password.');
+    } on DioException catch (e) {
+      debugPrint('Dio Error Type: ${e.type}');
+      debugPrint('Dio Error Message: ${e.message}');
+      debugPrint('Status Code: ${e.response?.statusCode}');
+      debugPrint('Response: ${e.response?.data}');
+
+      final responseData = e.response?.data;
+
+      if (responseData is Map && responseData['message'] != null) {
+        throw Exception(responseData['message'].toString());
+      }
+
+      throw Exception(e.message ?? 'Failed to change password.');
+    } catch (e) {
+      debugPrint('Change Password Error: $e');
+      rethrow;
+    }
+  }
+
+  // update profile Api
+
+  Future<GurujiProfileUpdateModel?> gurujiupdatefunction(
+    Map<String, dynamic> profileData,
+  ) async {
+    final String updateProfileApi =
+        ApiEndpoint().hostUrl + ApiEndpoint().gurujiProfileUpdate;
+
+    debugPrint('Update Guruji Profile API: $updateProfileApi');
+    debugPrint('Request Data: $profileData');
+
+    final storage = StorageService();
+    final token = storage.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Authentication token not found. Please login again.');
+    }
+
+    try {
+      final Response response = await dio.put(
+        updateProfileApi,
+        data: profileData,
+        options: Options(
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      debugPrint('Update Profile Status Code: ${response.statusCode}');
+      debugPrint('Update Profile Response: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data is Map) {
+          final mapData = Map<String, dynamic>.from(response.data as Map);
+          if (mapData['success'] == false) {
+            final msg = mapData['message'] ?? 'Failed to update Guruji profile.';
+            throw Exception(msg.toString());
+          }
+          return GurujiProfileUpdateModel.fromJson(mapData);
+        }
+
+        throw Exception('Invalid API response format.');
+      }
+
+      throw Exception('Failed to update Guruji profile.');
+    } on DioException catch (e) {
+      debugPrint('Dio Error Type: ${e.type}');
+      debugPrint('Dio Error Message: ${e.message}');
+      debugPrint('Status Code: ${e.response?.statusCode}');
+      debugPrint('Response: ${e.response?.data}');
 
       final responseData = e.response?.data;
 
       if (responseData is Map) {
-        if (responseData["errors"] != null) {
-          final errors = responseData["errors"];
-          if (errors is Map) {
-            final errorMessages = errors.values.expand((element) => element is List ? element : [element]).join(", ");
-            if (errorMessages.isNotEmpty) {
-              throw Exception(errorMessages);
-            }
-          } else if (errors is List && errors.isNotEmpty) {
-            throw Exception(errors.join(", "));
+        final message = responseData["message"];
+        final error = responseData["error"];
+        final errors = responseData["errors"];
+
+        String? detailedError;
+        if (errors is Map) {
+          final msgs = errors.values
+              .map((v) => v is List ? v.join(", ") : v.toString())
+              .where((s) => s.isNotEmpty)
+              .toList();
+          if (msgs.isNotEmpty) {
+            detailedError = msgs.join("\n");
           }
+        } else if (errors is List && errors.isNotEmpty) {
+          detailedError = errors.join(", ");
+        } else if (errors is String && errors.isNotEmpty) {
+          detailedError = errors;
         }
-        if (responseData["message"] != null) {
-          throw Exception(responseData["message"].toString());
+
+        final combined = detailedError ?? message?.toString() ?? error?.toString();
+        if (combined != null && combined.isNotEmpty) {
+          throw Exception(combined);
         }
       }
 
-      throw Exception(e.message ?? "Failed to fetch Guruji profile");
+      if (e.response?.statusCode == 401) {
+        throw Exception('Session expired or unauthorized. Please login again.');
+      }
+
+      throw Exception(e.message ?? 'Failed to update Guruji profile.');
+    } catch (e) {
+      debugPrint('Update Guruji Profile Error: $e');
+      rethrow;
     }
   }
 }

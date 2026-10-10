@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/Auth/Forget_password_bloc/forget_password_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigation_bloc.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Chanfe_Password_Profile/change_password.bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profile/guruji_profile_bloc.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Update_Guruji_profile/update_guruji_profile_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/Language/language_bloc.dart';
 
 import 'package:purohitset_app/Repository/Guruji_Auth_Repo/auth_repository.dart';
@@ -30,6 +32,13 @@ void main() async {
         BlocProvider(create: (_) => ForgetPasswordBloc()),
         BlocProvider(create: (_) => GurujiProfileBloc(authRepository)),
         BlocProvider(create: (_) => LanguageBloc()),
+        BlocProvider(
+          create: (_) => ChangePasswordBloc(repository: authRepository),
+        ),
+        BlocProvider(
+          create: (context) =>
+              GurujiProfileUpdateBloc(repository: authRepository),
+        ),
       ],
       child: const MyApp(),
     ),

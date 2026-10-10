@@ -90,7 +90,7 @@ class LoginScreen extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 300),
+                        padding: const EdgeInsets.only(top: 280),
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
                           keyboardDismissBehavior:
@@ -121,13 +121,13 @@ class LoginScreen extends StatelessWidget {
                                         "Login As",
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 18,
+                                          fontSize: 22,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ),
 
-                                    const SizedBox(height: 8),
+                                    const SizedBox(height: 20),
 
                                     // =================================================
                                     // YAJMAN / GURUJI

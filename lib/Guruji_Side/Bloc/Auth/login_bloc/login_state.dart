@@ -5,7 +5,7 @@ abstract class LoginState extends Equatable {
   final String loginType;
   final bool isPasswordVisible;
 
-  const LoginState({this.loginType = 'Yajman', this.isPasswordVisible = false});
+  const LoginState({this.loginType = 'Guruji', this.isPasswordVisible = false});
 
   @override
   List<Object?> get props => [loginType, isPasswordVisible];

@@ -13,6 +13,7 @@ class FormTextField extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
+  final FormFieldSetter<String>? onSaved;
 
   const FormTextField({
     super.key,
@@ -28,6 +29,7 @@ class FormTextField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.onChanged,
+    this.onSaved,
   });
 
   @override
@@ -43,14 +45,15 @@ class FormTextField extends StatelessWidget {
         readOnly: readOnly,
         onTap: onTap,
         onChanged: onChanged,
+        onSaved: onSaved,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
-            color: Color(0xFF00674f),
+          labelStyle: const TextStyle(
+            color: Color(0xFF00674F),
             fontWeight: FontWeight.w400,
           ),
           hintText: hint,
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w200,
           ),
@@ -63,7 +66,7 @@ class FormTextField extends StatelessWidget {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Color(0xFF00674f), width: 1.5),
+            borderSide: const BorderSide(color: Color(0xFF00674F), width: 1.5),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
@@ -71,9 +74,10 @@ class FormTextField extends StatelessWidget {
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
+            borderSide: const BorderSide(color: Colors.red),
           ),
         ),
-        style: TextStyle(color: Colors.black87),
+        style: const TextStyle(color: Colors.black87),
       ),
     );
   }

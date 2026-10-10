@@ -77,7 +77,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             'Unable to connect to the server. Please check your internet connection.';
       } else if (e.response?.statusCode == 401 ||
           e.response?.statusCode == 403) {
-        errorMessage = 'Incorrect phone number or password. Please try again.';
+        final responseData = e.response?.data;
+        if (responseData is Map && responseData['message'] != null) {
+          errorMessage = responseData['message'].toString();
+        } else {
+          errorMessage = 'Incorrect phone number or password. Please try again.';
+        }
       } else {
         final responseData = e.response?.data;
 
@@ -86,7 +91,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             (responseData['message'] as String).isNotEmpty) {
           errorMessage = responseData['message'] as String;
         } else {
-          errorMessage = 'Something went wrong. Please try again.';
+          errorMessage = e.message ?? 'Something went wrong. Please try again.';
         }
       }
 
@@ -98,9 +103,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         ),
       );
     } catch (e) {
+      final msg = e.toString().replaceFirst('Exception: ', '').trim();
       emit(
         LoginFailureState(
-          'Something went wrong. Please try again.',
+          msg.isNotEmpty ? msg : 'Something went wrong. Please try again.',
           loginType: loginType,
           isPasswordVisible: isVisible,
         ),

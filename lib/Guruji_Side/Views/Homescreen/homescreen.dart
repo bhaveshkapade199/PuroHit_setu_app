@@ -7,6 +7,9 @@ import 'package:purohitset_app/Constant/get_storage.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigation_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigationbar_event.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigationbar_state.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profile/guruji_profile_bloc.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profile/guruji_profile_event.dart';
+import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profile/guruji_profile_state.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/Language/language_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Auth/change_password_screen.dart';
 
@@ -15,6 +18,7 @@ import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/booking_his
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/chatting_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/profile_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/reels_screen.dart';
+import 'package:purohitset_app/Guruji_Side/Views/Profile/update_profile_screen.dart';
 
 class Homescreen extends StatelessWidget {
   Homescreen({super.key});
@@ -314,6 +318,42 @@ class Homescreen extends StatelessWidget {
                           context.read<BottomNavigationBloc>().add(
                             const BottomNavigationTabChanged(4),
                           );
+                        },
+                      ),
+
+                      // UPDATE PROFILE
+                      ListTile(
+                        leading: const Icon(
+                          Icons.edit_note_rounded,
+                          color: Color(0xFFEB4A0A),
+                        ),
+                        title: const Text(
+                          'Update Profile',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          final profileState =
+                              context.read<GurujiProfileBloc>().state;
+                          if (profileState is GurujiProfileSuccessState) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => UpdateProfileScreen(
+                                  guruji: profileState.profile.data.guruji,
+                                  onUpdated: () {
+                                    context.read<GurujiProfileBloc>().add(
+                                      const GetGurujiDetailEvent(),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          } else {
+                            context.read<BottomNavigationBloc>().add(
+                              const BottomNavigationTabChanged(4),
+                            );
+                          }
                         },
                       ),
 

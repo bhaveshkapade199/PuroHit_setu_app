@@ -1,10 +1,9 @@
 class ApiEndpoint {
-  final String baseUrl = "https://purohitsetu.com/api/gurujis";
   final String hostUrl = "https://purohitsetu.com";
 
   final String gurujiRegApi = "/add_guruji";
 
-  final String gurujiLogin = "/login_guruji";
+  final String gurujiLogin = "/api/gurujis/login_guruji";
 
   final String sendOTP = "/api/otp/send";
 
@@ -14,5 +13,9 @@ class ApiEndpoint {
 
   final String resetPassword = "/api/gurujis/reset_password";
 
-  final String gurujiProfile = "/guruji_profile";
+  final String gurujiProfile = "/api/gurujis/guruji_profile";
+
+  final String changePassword = "/api/gurujis/change_password.php";
+
+  final String gurujiProfileUpdate = "/api/gurujis/update_profile";
 }

@@ -6,6 +6,7 @@ import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profil
 import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profile/guruji_profile_event.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profile/guruji_profile_state.dart';
 import 'package:purohitset_app/Guruji_Side/Model/Auth/guruji_profile_model.dart';
+import 'package:purohitset_app/Guruji_Side/Views/Profile/update_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -14,247 +15,114 @@ class ProfileScreen extends StatelessWidget {
   static const Color darkBrown = Color(0xFF4A2418);
   static const Color creamColor = Color(0xFFFFFAF0);
 
-  void _showEditProfileModal(BuildContext context, Guruji guruji) {
-    final firstNameController =
-        TextEditingController(text: guruji.firstName ?? '');
-    final lastNameController =
-        TextEditingController(text: guruji.lastName ?? '');
-    final phoneController = TextEditingController(text: guruji.phone ?? '');
-    final whatsappController =
-        TextEditingController(text: guruji.whatsappNumber ?? '');
-    final emailController = TextEditingController(text: guruji.email ?? '');
-    final genderController = TextEditingController(text: guruji.gender ?? '');
-    final dobController =
-        TextEditingController(text: guruji.dateOfBirth ?? '');
-    final religionController =
-        TextEditingController(text: guruji.religion ?? '');
-    final sampradayController =
-        TextEditingController(text: guruji.sampraday ?? '');
-    final vedaShakhaController =
-        TextEditingController(text: guruji.vedaShakha ?? '');
-    final qualificationController =
-        TextEditingController(text: guruji.qualification ?? '');
-    final experienceController = TextEditingController(
-      text: guruji.experienceYears?.toString() ?? '',
-    );
+  void _showProfileIncompleteDialog(
+    BuildContext context,
+    int percentage,
+    Guruji guruji,
+  ) {
+    if (percentage >= 100) return;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (modalContext) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(modalContext).viewInsets.bottom,
-            left: 20,
-            right: 20,
-            top: 20,
-          ),
-          child: SizedBox(
-            height: MediaQuery.of(modalContext).size.height * 0.75,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+
+      showDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        builder: (dialogContext) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            backgroundColor: creamColor,
+            icon: const Icon(
+              Icons.account_circle_outlined,
+              size: 55,
+              color: primaryGold,
+            ),
+            title: const Text(
+              'Complete Your Profile',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: darkBrown,
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppTranslations.tr('edit_profile'),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: darkBrown,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(modalContext),
-                    ),
-                  ],
+                Text(
+                  'Your profile is $percentage% complete.',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 15),
                 ),
-                const Divider(),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      _buildTextField(
-                        controller: firstNameController,
-                        label: AppTranslations.tr('first_name'),
-                        icon: Icons.person_outline,
-                      ),
-                      _buildTextField(
-                        controller: lastNameController,
-                        label: AppTranslations.tr('last_name'),
-                        icon: Icons.person_outline,
-                      ),
-                      _buildTextField(
-                        controller: phoneController,
-                        label: AppTranslations.tr('phone_number'),
-                        icon: Icons.phone_outlined,
-                        keyboardType: TextInputType.phone,
-                      ),
-                      _buildTextField(
-                        controller: whatsappController,
-                        label: AppTranslations.tr('whatsapp_number'),
-                        icon: Icons.phone_android_outlined,
-                        keyboardType: TextInputType.phone,
-                      ),
-                      _buildTextField(
-                        controller: emailController,
-                        label: AppTranslations.tr('email'),
-                        icon: Icons.email_outlined,
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      _buildTextField(
-                        controller: genderController,
-                        label: AppTranslations.tr('gender'),
-                        icon: Icons.wc_outlined,
-                      ),
-                      _buildTextField(
-                        controller: dobController,
-                        label: AppTranslations.tr('dob'),
-                        icon: Icons.calendar_month_outlined,
-                      ),
-                      _buildTextField(
-                        controller: religionController,
-                        label: AppTranslations.tr('religion'),
-                        icon: Icons.temple_hindu_outlined,
-                      ),
-                      _buildTextField(
-                        controller: sampradayController,
-                        label: AppTranslations.tr('sampraday'),
-                        icon: Icons.auto_awesome_outlined,
-                      ),
-                      _buildTextField(
-                        controller: vedaShakhaController,
-                        label: AppTranslations.tr('veda_shakha'),
-                        icon: Icons.menu_book_outlined,
-                      ),
-                      _buildTextField(
-                        controller: qualificationController,
-                        label: AppTranslations.tr('qualification'),
-                        icon: Icons.school_outlined,
-                      ),
-                      _buildTextField(
-                        controller: experienceController,
-                        label: AppTranslations.tr('experience'),
-                        icon: Icons.work_history_outlined,
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Please complete your profile to provide all your details.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 48),
-                            side: const BorderSide(color: Colors.grey),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () => Navigator.pop(modalContext),
-                          child: Text(
-                            AppTranslations.tr('cancel'),
-                            style: const TextStyle(color: Colors.black87),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFEB4A0A),
-                            minimumSize: const Size(double.infinity, 48),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {
-                            guruji.firstName = firstNameController.text.trim();
-                            guruji.lastName = lastNameController.text.trim();
-                            guruji.fullName =
-                                "${firstNameController.text.trim()} ${lastNameController.text.trim()}";
-                            guruji.phone = phoneController.text.trim();
-                            guruji.whatsappNumber =
-                                whatsappController.text.trim();
-                            guruji.email = emailController.text.trim();
-                            guruji.gender = genderController.text.trim();
-                            guruji.dateOfBirth = dobController.text.trim();
-                            guruji.religion = religionController.text.trim();
-                            guruji.sampraday = sampradayController.text.trim();
-                            guruji.vedaShakha = vedaShakhaController.text.trim();
-                            guruji.qualification =
-                                qualificationController.text.trim();
-                            guruji.experienceYears =
-                                int.tryParse(experienceController.text.trim()) ??
-                                    guruji.experienceYears;
-
-                            Navigator.pop(modalContext);
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  AppTranslations.tr('profile_updated'),
-                                ),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-
-                            context.read<GurujiProfileBloc>().add(
-                              const GetGurujiDetailEvent(),
-                            );
-                          },
-                          child: Text(
-                            AppTranslations.tr('save'),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                const SizedBox(height: 16),
+                LinearProgressIndicator(
+                  value: percentage.clamp(0, 100) / 100,
+                  minHeight: 7,
+                  borderRadius: BorderRadius.circular(10),
+                  backgroundColor: Colors.black12,
+                  valueColor: const AlwaysStoppedAnimation<Color>(primaryGold),
                 ),
               ],
             ),
-          ),
-        );
-      },
-    );
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryGold,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(150, 45),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => UpdateProfileScreen(
+                        guruji: guruji,
+                        onUpdated: () {
+                          context.read<GurujiProfileBloc>().add(
+                            const GetGurujiDetailEvent(),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('Complete Profile'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Later', style: TextStyle(color: darkBrown)),
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, color: primaryGold),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: primaryGold, width: 2),
-          ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  void _navigateToUpdateProfile(BuildContext context, Guruji guruji) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => UpdateProfileScreen(
+          guruji: guruji,
+          onUpdated: () {
+            context.read<GurujiProfileBloc>().add(
+              const GetGurujiDetailEvent(),
+            );
+          },
         ),
       ),
     );
@@ -284,17 +152,65 @@ class ProfileScreen extends StatelessWidget {
             );
           }
 
-          if (state is GurujiProfileSuccessState) {
-            final guruji = state.profile.data?.guruji;
+          if (state is GurujiProfileErrorState) {
+            debugPrint("PROFILE BLOC ERROR: ${state.message}");
 
-            if (guruji == null) {
-              return const Center(child: Text("Profile data not found"));
-            }
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 45,
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      "Failed to load profile",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(state.message, textAlign: TextAlign.center),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryGold,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () {
+                        context.read<GurujiProfileBloc>().add(
+                          const GetGurujiDetailEvent(),
+                        );
+                      },
+                      child: const Text("Retry"),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          if (state is GurujiProfileSuccessState) {
+            final guruji = state.profile.data.guruji;
 
             final int percentage =
-                state.profile.data?.profileCompletion?.percentage ?? 0;
+                state.profile.data.profileCompletion.percentage;
 
             final double progress = percentage.clamp(0, 100) / 100;
+
+            String formatDob(DateTime? dob) {
+              if (dob == null) return '';
+
+              final day = dob.day.toString().padLeft(2, '0');
+              final month = dob.month.toString().padLeft(2, '0');
+
+              return '$day/$month/${dob.year}';
+            }
 
             return RefreshIndicator(
               color: primaryGold,
@@ -348,13 +264,14 @@ class ProfileScreen extends StatelessWidget {
                                   ),
                                   child: IconButton(
                                     padding: EdgeInsets.zero,
+                                    tooltip: "Edit Profile",
                                     icon: const Icon(
                                       Icons.edit,
                                       color: Colors.white,
                                       size: 20,
                                     ),
                                     onPressed: () =>
-                                        _showEditProfileModal(context, guruji),
+                                        _navigateToUpdateProfile(context, guruji),
                                   ),
                                 ),
                               ],
@@ -381,8 +298,8 @@ class ProfileScreen extends StatelessWidget {
                                         strokeWidth: 2,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
-                                          Colors.white,
-                                        ),
+                                              Colors.white,
+                                            ),
                                       ),
                                     ),
                                     SizedBox(
@@ -394,8 +311,8 @@ class ProfileScreen extends StatelessWidget {
                                         strokeCap: StrokeCap.round,
                                         valueColor:
                                             const AlwaysStoppedAnimation<Color>(
-                                          Colors.amber,
-                                        ),
+                                              Colors.amber,
+                                            ),
                                       ),
                                     ),
                                     Container(
@@ -426,23 +343,31 @@ class ProfileScreen extends StatelessWidget {
                                     ),
                                     Positioned(
                                       top: -1,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 5,
-                                          vertical: 2,
+                                      child: GestureDetector(
+                                        onTap: () =>
+                                            _showProfileIncompleteDialog(
+                                          context,
+                                          percentage,
+                                          guruji,
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.amber,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 5,
+                                            vertical: 2,
                                           ),
-                                        ),
-                                        child: Text(
-                                          "$percentage%",
-                                          style: const TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
+                                          decoration: BoxDecoration(
+                                            color: Colors.amber,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "$percentage%",
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -491,6 +416,61 @@ class ProfileScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+
+                  // Profile Completion Bar & Edit Profile Action Button
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => _navigateToUpdateProfile(context, guruji),
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: primaryGold.withValues(alpha: 0.4),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.04),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.edit_note_rounded,
+                                    color: primaryGold,
+                                    size: 22,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    "Edit Profile Details",
+                                    style: TextStyle(
+                                      color: darkBrown,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -522,7 +502,7 @@ class ProfileScreen extends StatelessWidget {
                                 profileField(
                                   icon: Icons.calendar_month_outlined,
                                   title: AppTranslations.tr('dob'),
-                                  value: guruji.dateOfBirth,
+                                  value: formatDob(guruji.dateOfBirth),
                                 ),
                                 profileField(
                                   icon: Icons.temple_hindu_outlined,
@@ -542,13 +522,14 @@ class ProfileScreen extends StatelessWidget {
                                 profileField(
                                   icon: Icons.school_outlined,
                                   title: AppTranslations.tr('qualification'),
-                                  value: guruji.qualification,
+                                  value: guruji.qualification?.toString(),
                                 ),
                                 profileField(
                                   icon: Icons.work_history_outlined,
                                   title: AppTranslations.tr('experience'),
-                                  value: guruji.experienceYears?.toString(),
+                                  value: guruji.experienceYears.toString(),
                                 ),
+
                                 const SizedBox(height: 20),
                               ],
                             ),
@@ -590,8 +571,9 @@ class ProfileScreen extends StatelessWidget {
     required String title,
     String? value,
   }) {
-    final String displayValue =
-        value == null || value.isEmpty ? AppTranslations.tr('not_available') : value;
+    final String displayValue = value == null || value.isEmpty
+        ? AppTranslations.tr('not_available')
+        : value;
 
     return Card(
       elevation: 2,
@@ -666,43 +648,45 @@ class ProfileScreen extends StatelessWidget {
       height: 90,
       fit: BoxFit.cover,
       alignment: Alignment.center,
-      loadingBuilder: (
-        BuildContext context,
-        Widget child,
-        ImageChunkEvent? loadingProgress,
-      ) {
-        if (loadingProgress == null) {
-          return SizedBox(
-            width: 90,
-            height: 90,
-            child: Center(child: child),
-          );
-        }
+      loadingBuilder:
+          (
+            BuildContext context,
+            Widget child,
+            ImageChunkEvent? loadingProgress,
+          ) {
+            if (loadingProgress == null) {
+              return SizedBox(
+                width: 90,
+                height: 90,
+                child: Center(child: child),
+              );
+            }
 
-        return Container(
-          width: 90,
-          height: 90,
-          color: Colors.grey.shade100,
-          alignment: Alignment.center,
-          child: const SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(
-              color: primaryGold,
-              strokeWidth: 2,
-            ),
-          ),
-        );
-      },
-      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-        return Container(
-          width: 90,
-          height: 90,
-          color: Colors.grey.shade200,
-          alignment: Alignment.center,
-          child: Icon(Icons.person, size: 45, color: Colors.grey.shade500),
-        );
-      },
+            return Container(
+              width: 90,
+              height: 90,
+              color: Colors.grey.shade100,
+              alignment: Alignment.center,
+              child: const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  color: primaryGold,
+                  strokeWidth: 2,
+                ),
+              ),
+            );
+          },
+      errorBuilder:
+          (BuildContext context, Object error, StackTrace? stackTrace) {
+            return Container(
+              width: 90,
+              height: 90,
+              color: Colors.grey.shade200,
+              alignment: Alignment.center,
+              child: Icon(Icons.person, size: 45, color: Colors.grey.shade500),
+            );
+          },
     );
   }
 }
