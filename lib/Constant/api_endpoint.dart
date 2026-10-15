@@ -18,4 +18,8 @@ class ApiEndpoint {
   final String changePassword = "/api/gurujis/change_password.php";
 
   final String gurujiProfileUpdate = "/api/gurujis/update_profile";
+
+  final String yajamanRegApi = "/api/yajamans/register";
+
+  final String yajamanLoginApi = "/api/yajamans/login";
 }

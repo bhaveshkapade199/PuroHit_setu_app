@@ -4,10 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/Auth/login_bloc/login_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/Auth/login_bloc/login_event.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/Auth/login_bloc/login_state.dart';
+import 'package:purohitset_app/Guruji_Side/Views/Homescreen/homescreen.dart';
 import 'package:purohitset_app/Repository/Guruji_Auth_Repo/auth_repository.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Auth/forget_password_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Auth/register_screen.dart';
-import 'package:purohitset_app/Guruji_Side/Views/Homescreen/homescreen.dart';
+import 'package:purohitset_app/Yajaman_Side/Auth/yajaman_register.dart';
+
 import 'package:purohitset_app/Widget/form_button.dart';
 import 'package:purohitset_app/Widget/form_field.dart';
 import 'package:purohitset_app/Widget/rps_custom_painter.dart';
@@ -161,94 +163,6 @@ class LoginScreen extends StatelessWidget {
                                                             "Yajman",
                                                           ),
                                                         );
-
-                                                    ScaffoldMessenger.of(
-                                                        context,
-                                                      )
-                                                      ..hideCurrentSnackBar()
-                                                      ..showSnackBar(
-                                                        SnackBar(
-                                                          behavior:
-                                                              SnackBarBehavior
-                                                                  .floating,
-                                                          backgroundColor:
-                                                              Colors
-                                                                  .transparent,
-                                                          elevation: 0,
-                                                          duration:
-                                                              const Duration(
-                                                                seconds: 4,
-                                                              ),
-                                                          content: Container(
-                                                            padding:
-                                                                const EdgeInsets.all(
-                                                                  16,
-                                                                ),
-                                                            decoration: BoxDecoration(
-                                                              color:
-                                                                  const Color(
-                                                                    0xFF1E1E1E,
-                                                                  ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    16,
-                                                                  ),
-                                                              border: Border.all(
-                                                                color:
-                                                                    const Color(
-                                                                      0xFFFFCD42,
-                                                                    ),
-                                                                width: 1.2,
-                                                              ),
-                                                              boxShadow: [
-                                                                BoxShadow(
-                                                                  color:
-                                                                      const Color.fromARGB(
-                                                                        255,
-                                                                        250,
-                                                                        250,
-                                                                        250,
-                                                                      ).withValues(
-                                                                        alpha:
-                                                                            0.25,
-                                                                      ),
-                                                                  blurRadius:
-                                                                      12,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .temple_hindu,
-                                                                  color: Color(
-                                                                    0xFFFFCD42,
-                                                                  ),
-                                                                  size: 28,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 12,
-                                                                ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    "Yajman services are coming soon. We're preparing a better experience for you!",
-                                                                    style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      );
                                                   },
                                                   child: Container(
                                                     height: 40,
@@ -558,13 +472,29 @@ class LoginScreen extends StatelessWidget {
                                         ),
                                         InkWell(
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    RegisterScreen(),
-                                              ),
-                                            );
+                                            final loginState = context
+                                                .read<LoginBloc>()
+                                                .state;
+                                            final isYajman =
+                                                loginState.loginType ==
+                                                "Yajman";
+                                            if (isYajman) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const YajamanRegisterScreen(),
+                                                ),
+                                              );
+                                            } else {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      RegisterScreen(),
+                                                ),
+                                              );
+                                            }
                                           },
                                           child: const Padding(
                                             padding: EdgeInsets.symmetric(
