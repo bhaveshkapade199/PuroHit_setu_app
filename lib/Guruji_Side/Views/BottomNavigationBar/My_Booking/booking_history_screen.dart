@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigation_bloc.dart';
-import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigationbar_event.dart';
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/My_Booking/pooja_detail_screen.dart';
 import 'package:purohitset_app/Widget/custom_appbar.dart';
 
