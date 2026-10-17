@@ -123,58 +123,154 @@ class Homescreen extends StatelessWidget {
                     children: [
                       DrawerHeader(
                         margin: EdgeInsets.zero,
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(16),
                         decoration: const BoxDecoration(
-                          color: Color.fromARGB(255, 235, 156, 10),
+                          image: DecorationImage(
+                            image: AssetImage(
+                              'Assets/Images/app_bar_image.png',
+                            ),
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Stack(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 65,
-                                  width: 65,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  padding: const EdgeInsets.all(5),
-                                  child: Image.asset(
-                                    'Assets/Images/purohit-setu-logo.webp',
-                                    fit: BoxFit.contain,
-                                  ),
+                            // Close button
+                            Positioned(
+                              bottom: 90,
+                              right: -8,
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(
+                                  Icons.close,
+                                  size: 25,
+                                  color: Colors.white,
                                 ),
-
-                                const SizedBox(height: 10),
-
-                                Text(
-                                  AppTranslations.tr('app_name'),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
 
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: const Icon(
-                                Icons.close,
-                                size: 28,
-                                color: Colors.black,
+                            // Guruji profile information
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8, right: 28),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // Profile image
+                                  Container(
+                                    width: 76,
+                                    height: 76,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: const Color(0xFFFFD873),
+                                        width: 3,
+                                      ),
+                                    ),
+                                    padding: const EdgeInsets.all(3),
+                                    child: ClipOval(
+                                      child: Image.asset(
+                                        'Assets/Images/purohit-setu-logo.webp',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 14),
+
+                                  // Name, greeting and rating
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Namaste greeting
+                                        const Row(
+                                          children: [
+                                            Text(
+                                              '🙏',
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                            SizedBox(width: 5),
+                                            Expanded(
+                                              child: Text(
+                                                'Namaste, Guruji!',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  color: Color(0xFFFFD873),
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        const SizedBox(height: 6),
+
+                                        // Guruji name: replace with API profile name
+                                        const Text(
+                                          'Pt. Guruji Name',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 7),
+
+                                        // Rating
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.18,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                          child: const Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.star,
+                                                color: Color(0xFFFFD873),
+                                                size: 16,
+                                              ),
+                                              SizedBox(width: 4),
+                                              Text(
+                                                '4.8 Rating',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-
+                       
+                       
                       // HOME
                       ListTile(
                         leading: const Icon(
@@ -1249,13 +1345,11 @@ class _NavItem extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: 25,
-          color: isActive
-              ? Colors.black
-              : const Color.fromARGB(153, 228, 222, 222),
-          fontWeight: FontWeight.w700,
+          size: 22,
+          color: isActive ? Colors.black : Colors.white,
+          fontWeight: FontWeight.w400,
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
         Text(
           label,
           maxLines: 1,

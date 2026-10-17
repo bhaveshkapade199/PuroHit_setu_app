@@ -7,12 +7,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double appBarHeight;
 
   final bool showLogo;
+  final bool showBackButton;
+  final bool showLeading;
   final bool showMenu;
   final bool showNotification;
   final bool centerTitle;
 
   final VoidCallback? onMenuTap;
   final VoidCallback? onNotificationTap;
+  final VoidCallback? onBackTap;
 
   final Widget? leading;
   final List<Widget>? actions;
@@ -23,11 +26,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.subtitle,
     this.appBarHeight = 120,
     this.showLogo = true,
+    this.showBackButton = true,
+    this.showLeading = true,
     this.showMenu = false,
     this.showNotification = false,
     this.centerTitle = false,
     this.onMenuTap,
     this.onNotificationTap,
+    this.onBackTap,
     this.leading,
     this.actions,
   });
@@ -51,21 +57,39 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
 
           Padding(
-            padding: const EdgeInsets.only(left: 12, right: 8, bottom: 24),
+            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 24),
             child: Row(
               children: [
-                if (leading != null)
-                  leading!
-                else if (showLogo)
-                  Image.asset(
-                    'Assets/Images/purohit-setu-logo.webp',
-                    height: 60,
-                    width: 60,
-                    fit: BoxFit.contain,
-                  ),
+                // Optional leading widget, back button, or logo
+                if (showLeading) ...[
+                  if (leading != null)
+                    leading!
+                  else if (showBackButton)
+                    IconButton(
+                      onPressed:
+                          onBackTap ??
+                          () {
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            }
+                          },
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                      tooltip: 'Back',
+                    )
+                  else if (showLogo)
+                    Image.asset(
+                      'Assets/Images/purohit-setu-logo.webp',
+                      height: 60,
+                      width: 60,
+                      fit: BoxFit.contain,
+                    ),
+                ],
 
-                if (leading != null || showLogo) const SizedBox(width: 8),
-
+                // Title and subtitle remain visible
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -107,8 +131,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
 
+                // Custom actions
                 if (actions != null) ...actions!,
 
+                // Optional menu button
                 if (showMenu)
                   IconButton(
                     onPressed:
@@ -120,6 +146,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     tooltip: 'Open Menu',
                   ),
 
+                // Optional notification button
                 if (showNotification)
                   IconButton(
                     onPressed: onNotificationTap,

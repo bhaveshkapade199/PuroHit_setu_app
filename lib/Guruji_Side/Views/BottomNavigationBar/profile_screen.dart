@@ -7,6 +7,7 @@ import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profil
 import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Show_Guruji_Profile/guruji_profile_state.dart';
 import 'package:purohitset_app/Guruji_Side/Model/Auth/guruji_profile_model.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Profile/update_profile_screen.dart';
+import 'package:purohitset_app/Widget/custom_appbar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -119,9 +120,7 @@ class ProfileScreen extends StatelessWidget {
         builder: (_) => UpdateProfileScreen(
           guruji: guruji,
           onUpdated: () {
-            context.read<GurujiProfileBloc>().add(
-              const GetGurujiDetailEvent(),
-            );
+            context.read<GurujiProfileBloc>().add(const GetGurujiDetailEvent());
           },
         ),
       ),
@@ -226,61 +225,45 @@ class ProfileScreen extends StatelessWidget {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        Container(
-                          height: 180,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                "Assets/Images/temple_image.webp",
-                              ),
-                              fit: BoxFit.cover,
-                            ),
+                        SizedBox(
+                          height: 340,
+                          child: CustomAppBar(
+                            title: AppTranslations.tr(''),
+                            showLogo: false,
+                            showMenu: false,
+                            showNotification: false,
+                            centerTitle: true,
+                            appBarHeight: 160,
+                            showLeading: false,
                           ),
+                        ),
+
+                        Positioned(
+                          top: 30,
+                          right: 20,
                           child: Container(
-                            color: Colors.black54,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 30,
+                            width: 36,
+                            height: 36,
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(255, 253, 253, 253),
+                              shape: BoxShape.circle,
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(width: 32),
-                                Text(
-                                  AppTranslations.tr('profile_screen'),
-                                  style: const TextStyle(
-                                    fontSize: 19,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: const BoxDecoration(
-                                    color: Color.fromARGB(255, 253, 173, 0),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: IconButton(
-                                    padding: EdgeInsets.zero,
-                                    tooltip: "Edit Profile",
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                    onPressed: () =>
-                                        _navigateToUpdateProfile(context, guruji),
-                                  ),
-                                ),
-                              ],
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              tooltip: "Edit Profile",
+                              icon: const Icon(
+                                Icons.edit,
+                                color: Color.fromARGB(255, 61, 17, 0),
+                                size: 20,
+                              ),
+                              onPressed: () =>
+                                  _navigateToUpdateProfile(context, guruji),
                             ),
                           ),
                         ),
                         Positioned(
                           left: 0,
-                          bottom: -10,
+                          top: 70,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -346,10 +329,10 @@ class ProfileScreen extends StatelessWidget {
                                       child: GestureDetector(
                                         onTap: () =>
                                             _showProfileIncompleteDialog(
-                                          context,
-                                          percentage,
-                                          guruji,
-                                        ),
+                                              context,
+                                              percentage,
+                                              guruji,
+                                            ),
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 5,
@@ -419,12 +402,13 @@ class ProfileScreen extends StatelessWidget {
 
                   // Profile Completion Bar & Edit Profile Action Button
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                     child: Row(
                       children: [
                         Expanded(
                           child: InkWell(
-                            onTap: () => _navigateToUpdateProfile(context, guruji),
+                            onTap: () =>
+                                _navigateToUpdateProfile(context, guruji),
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
                               padding: const EdgeInsets.symmetric(

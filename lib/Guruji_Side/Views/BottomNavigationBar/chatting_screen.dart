@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigation_bloc.dart';
-import 'package:purohitset_app/Guruji_Side/Bloc/BottomNavigationBar/bottomNavigationbar_event.dart';
+
+import 'package:purohitset_app/Widget/custom_appbar.dart';
 
 class ChattingScreen extends StatelessWidget {
   const ChattingScreen({super.key});
@@ -9,17 +8,22 @@ class ChattingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            context.read<BottomNavigationBloc>().add(
-              const BottomNavigationTabChanged(0),
-            );
-          },
-        ),
-        title: const Text("Chatting Screen"),
+      // appBar: AppBar(
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back_ios),
+      //     onPressed: () {
+      //       context.read<BottomNavigationBloc>().add(
+      //         const BottomNavigationTabChanged(0),
+      //       );
+      //     },
+      //   ),
+      //   title: const Text("Chatting Screen"),
+      //   centerTitle: true,
+      // ),
+      appBar: CustomAppBar(
+        title: "Chatting Screen",
         centerTitle: true,
+        showLogo: false,
       ),
     );
   }

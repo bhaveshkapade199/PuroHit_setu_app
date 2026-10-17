@@ -7,16 +7,13 @@ import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Update_Guruji_prof
 import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Update_Guruji_profile/update_guruji_profile_event.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/GurujiProfile/Update_Guruji_profile/update_guruji_profile_state.dart';
 import 'package:purohitset_app/Guruji_Side/Model/Auth/guruji_profile_model.dart';
+import 'package:purohitset_app/Widget/custom_appbar.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
   final Guruji guruji;
   final VoidCallback? onUpdated;
 
-  const UpdateProfileScreen({
-    super.key,
-    required this.guruji,
-    this.onUpdated,
-  });
+  const UpdateProfileScreen({super.key, required this.guruji, this.onUpdated});
 
   @override
   State<UpdateProfileScreen> createState() => _UpdateProfileScreenState();
@@ -191,9 +188,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       'first_name': first,
       'middle_name': middle.isEmpty ? null : middle,
       'last_name': last,
-      'full_name': [first, middle, last]
-          .where((value) => value.isNotEmpty)
-          .join(' '),
+      'full_name': [
+        first,
+        middle,
+        last,
+      ].where((value) => value.isNotEmpty).join(' '),
       'gender': selectedGender,
       'date_of_birth': dob.text.trim(),
       'dob': dob.text.trim(),
@@ -216,9 +215,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       'language_preference': selectedLanguage,
     };
 
-    final payload = <String, dynamic>{
-      'profile': profileMap,
-    };
+    final payload = <String, dynamic>{'profile': profileMap};
 
     // Only attach addresses if address_line1 is supplied
     final hasCurrentAddress = currentAddress1.text.trim().isNotEmpty;
@@ -341,10 +338,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
             offset: const Offset(0, 3),
           ),
         ],
-        border: Border.all(
-          color: primaryGold.withValues(alpha: 0.2),
-          width: 1,
-        ),
+        border: Border.all(color: primaryGold.withValues(alpha: 0.2), width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -423,16 +417,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: primaryGold.withValues(alpha: 0.35),
-            ),
+            borderSide: BorderSide(color: primaryGold.withValues(alpha: 0.35)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              color: primaryGold,
-              width: 2,
-            ),
+            borderSide: const BorderSide(color: primaryGold, width: 2),
           ),
         ),
       ),
@@ -448,9 +437,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                message.isNotEmpty
-                    ? message
-                    : 'Profile updated successfully!',
+                message.isNotEmpty ? message : 'Profile updated successfully!',
               ),
               backgroundColor: Colors.green,
             ),
@@ -475,22 +462,51 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
         return Scaffold(
           backgroundColor: creamColor,
-          appBar: AppBar(
-            backgroundColor: const Color(0xFFFFD3A1),
-            elevation: 2,
+          // appBar: AppBar(
+          //   backgroundColor: const Color(0xFFFFD3A1),
+          //   elevation: 2,
+          //   centerTitle: true,
+          //   leading: IconButton(
+          //     icon: const Icon(Icons.arrow_back_ios_new, color: darkBrown),
+          //     onPressed: isLoading ? null : () => Navigator.of(context).pop(),
+          //   ),
+          //   title: const Text(
+          //     "Edit Profile",
+          //     style: TextStyle(
+          //       color: darkBrown,
+          //       fontWeight: FontWeight.bold,
+          //       fontSize: 18,
+          //     ),
+          //   ),
+          //   actions: [
+          // TextButton(
+          //   onPressed: isLoading ? null : _submit,
+          //   child: isLoading
+          //       ? const SizedBox(
+          //           width: 18,
+          //           height: 18,
+          //           child: CircularProgressIndicator(
+          //             strokeWidth: 2,
+          //             color: darkBrown,
+          //           ),
+          //         )
+          //       : const Text(
+          //           "SAVE",
+          //           style: TextStyle(
+          //             color: accentMaroon,
+          //             fontWeight: FontWeight.bold,
+          //             fontSize: 15,
+          //           ),
+          //         ),
+          // ),
+          // const SizedBox(width: 8),
+          //   ],
+          // ),
+          appBar: CustomAppBar(
+            title: "        Edit Profile",
+            showLogo: false,
             centerTitle: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: darkBrown),
-              onPressed: isLoading ? null : () => Navigator.of(context).pop(),
-            ),
-            title: const Text(
-              "Edit Profile",
-              style: TextStyle(
-                color: darkBrown,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
+            appBarHeight: 120,
             actions: [
               TextButton(
                 onPressed: isLoading ? null : _submit,
@@ -500,13 +516,13 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: darkBrown,
+                          color: creamColor,
                         ),
                       )
                     : const Text(
                         "SAVE",
                         style: TextStyle(
-                          color: accentMaroon,
+                          color: creamColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
@@ -522,7 +538,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 16,
+                  vertical: 0,
                 ),
                 children: [
                   // Profile Photo Header
@@ -534,10 +550,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           height: 100,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: primaryGold,
-                              width: 3,
-                            ),
+                            border: Border.all(color: primaryGold, width: 3),
                             boxShadow: [
                               BoxShadow(
                                 color: primaryGold.withValues(alpha: 0.2),
@@ -549,16 +562,19 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           child: ClipOval(
                             child: widget.guruji.profilePhotoUrl.isNotEmpty
                                 ? Image.network(
-                                    widget.guruji.profilePhotoUrl.startsWith('http')
+                                    widget.guruji.profilePhotoUrl.startsWith(
+                                          'http',
+                                        )
                                         ? widget.guruji.profilePhotoUrl
                                         : 'https://purohitsetu.com${widget.guruji.profilePhotoUrl}',
                                     fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) =>
-                                        const Icon(
-                                      Icons.person,
-                                      size: 55,
-                                      color: Colors.grey,
-                                    ),
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                              Icons.person,
+                                              size: 55,
+                                              color: Colors.grey,
+                                            ),
                                   )
                                 : const Icon(
                                     Icons.person,
@@ -699,7 +715,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         alternatePhone,
                         "Alternate Phone",
                         keyboardType: TextInputType.phone,
-                        prefixIcon: const Icon(Icons.phone_outlined, color: primaryGold),
+                        prefixIcon: const Icon(
+                          Icons.phone_outlined,
+                          color: primaryGold,
+                        ),
                       ),
                       _buildTextField(
                         whatsapp,
@@ -711,7 +730,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         email,
                         "Email Address",
                         keyboardType: TextInputType.emailAddress,
-                        prefixIcon: const Icon(Icons.email_outlined, color: primaryGold),
+                        prefixIcon: const Icon(
+                          Icons.email_outlined,
+                          color: primaryGold,
+                        ),
                       ),
                     ],
                   ),
