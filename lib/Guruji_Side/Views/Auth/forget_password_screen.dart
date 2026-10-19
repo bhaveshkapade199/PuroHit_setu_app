@@ -13,7 +13,6 @@ import 'package:purohitset_app/Widget/common_background.dart';
 import 'package:purohitset_app/Widget/custom_appbar.dart';
 import 'package:purohitset_app/Widget/form_button.dart';
 import 'package:purohitset_app/Widget/form_field.dart';
-import 'package:purohitset_app/Widget/rps_custom_painter.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
