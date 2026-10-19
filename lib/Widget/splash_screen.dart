@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/SplashScreens/splash_screen_bloc.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/SplashScreens/splash_screen_event.dart';
 import 'package:purohitset_app/Guruji_Side/Bloc/SplashScreens/splash_screen_state.dart';
-import 'package:purohitset_app/Constant/app_translations.dart';
+
 import 'package:purohitset_app/Guruji_Side/Views/Auth/login_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Homescreen/homescreen.dart';
 import 'package:purohitset_app/Widget/onboarding_screen.dart';
@@ -58,7 +58,7 @@ class SplashScreen extends StatelessWidget {
                   top: false,
                   child: Center(
                     child: AnimateText(
-                      AppTranslations.tr('splash_tagline'),
+                      "Connected With Trusted Purohit",
                       style: const TextStyle(
                         fontSize: 22,
                         color: Color(0xFF00674f),

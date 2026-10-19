@@ -226,7 +226,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFAF0),
+      backgroundColor: Colors.white,
       appBar: const CustomAppBar(
         title: 'My Bookings',
 

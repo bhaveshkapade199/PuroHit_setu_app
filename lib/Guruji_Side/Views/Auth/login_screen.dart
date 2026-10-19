@@ -8,11 +8,11 @@ import 'package:purohitset_app/Guruji_Side/Views/Homescreen/homescreen.dart';
 import 'package:purohitset_app/Repository/Guruji_Auth_Repo/auth_repository.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Auth/forget_password_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Auth/register_screen.dart';
+import 'package:purohitset_app/Widget/custom_appbar.dart';
 import 'package:purohitset_app/Yajaman_Side/Auth/yajaman_register.dart';
 
 import 'package:purohitset_app/Widget/form_button.dart';
 import 'package:purohitset_app/Widget/form_field.dart';
-import 'package:purohitset_app/Widget/rps_custom_painter.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -54,35 +54,24 @@ class LoginScreen extends StatelessWidget {
             builder: (context, constraints) {
               return Stack(
                 children: [
-                  Column(
-                    children: [
-                      SizedBox(
-                        height: 300,
-                        width: double.infinity,
-                        child: Center(
-                          child: Image(
-                            image: const AssetImage(
-                              "Assets/Images/purohit-setu-logo.webp",
-                            ),
-                          ),
-                        ),
-                      ),
+                  Column(children: [
+                     
                     ],
                   ),
 
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: SizedBox(
-                      height: 400,
-                      width: double.infinity,
-                      child: CustomPaint(
-                        painter: RPSCustomPainter(
-                          fillColor: const Color(
-                            0xffcd9933,
-                          ).withValues(alpha: 0.5),
-                          strokeColor: const Color(0xffffd873),
+                  CustomAppBar(
+                    title: "",
+                    appBarHeight: 400,
+                    showLeading: false,
+                  ),
+
+                  SizedBox(
+                    height: 300,
+                    width: double.infinity,
+                    child: Center(
+                      child: Image(
+                        image: const AssetImage(
+                          "Assets/Images/purohit-setu-logo.webp",
                         ),
                       ),
                     ),

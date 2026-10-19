@@ -10,6 +10,7 @@ import 'package:purohitset_app/Guruji_Side/Bloc/Auth/Forget_password_bloc/forget
 import 'package:purohitset_app/Guruji_Side/Views/Auth/reset_password_screen.dart';
 
 import 'package:purohitset_app/Widget/common_background.dart';
+import 'package:purohitset_app/Widget/custom_appbar.dart';
 import 'package:purohitset_app/Widget/form_button.dart';
 import 'package:purohitset_app/Widget/form_field.dart';
 import 'package:purohitset_app/Widget/rps_custom_painter.dart';
@@ -185,15 +186,16 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   top: 0,
                   left: 0,
                   right: 0,
-                  child: SizedBox(
-                    height: 400,
-                    width: double.infinity,
-                    child: CustomPaint(
-                      painter: RPSCustomPainter(
-                        fillColor: const Color(
-                          0xffcd9933,
-                        ).withValues(alpha: 0.5),
-                        strokeColor: const Color(0xffffd873),
+                  child: CustomAppBar(appBarHeight: 400, showLeading: false),
+                ),
+
+                SizedBox(
+                  height: 300,
+                  width: double.infinity,
+                  child: Center(
+                    child: Image(
+                      image: const AssetImage(
+                        "Assets/Images/purohit-setu-logo.webp",
                       ),
                     ),
                   ),

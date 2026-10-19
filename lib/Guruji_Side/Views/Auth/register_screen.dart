@@ -11,9 +11,9 @@ import 'package:purohitset_app/Guruji_Side/Bloc/Auth/register_bloc/register_stat
 import 'package:purohitset_app/Guruji_Side/Views/Auth/login_screen.dart';
 
 import 'package:purohitset_app/Widget/common_background.dart';
+import 'package:purohitset_app/Widget/custom_appbar.dart';
 import 'package:purohitset_app/Widget/form_button.dart';
 import 'package:purohitset_app/Widget/form_field.dart';
-import 'package:purohitset_app/Widget/rps_custom_painter.dart';
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
@@ -64,34 +64,27 @@ class RegisterScreen extends StatelessWidget {
           builder: (context, constraints) {
             return Stack(
               children: [
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 180,
-                      width: double.infinity,
-                      child: Center(
-                        child: Image(
-                          image: const AssetImage(
-                            "Assets/Images/purohit-setu-logo.webp",
-                          ),
-                        ),
-                      ),
-                    ),
+                Column(children: [
+                    
                   ],
                 ),
                 Positioned(
                   top: 0,
                   left: 0,
                   right: 0,
-                  child: SizedBox(
-                    height: 240,
-                    width: double.infinity,
-                    child: CustomPaint(
-                      painter: RPSCustomPainter(
-                        fillColor: const Color(
-                          0xffcd9933,
-                        ).withValues(alpha: 0.5),
-                        strokeColor: const Color.fromARGB(255, 255, 183, 0),
+                  child: CustomAppBar(
+                    title: "",
+                    appBarHeight: 240,
+                    showLeading: false,
+                  ),
+                ),
+                SizedBox(
+                  height: 180,
+                  width: double.infinity,
+                  child: Center(
+                    child: Image(
+                      image: const AssetImage(
+                        "Assets/Images/purohit-setu-logo.webp",
                       ),
                     ),
                   ),
@@ -99,7 +92,7 @@ class RegisterScreen extends StatelessWidget {
                 Positioned.fill(
                   child: Align(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 190),
+                      padding: const EdgeInsets.only(top: 170),
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
                         keyboardDismissBehavior:

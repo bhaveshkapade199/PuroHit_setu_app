@@ -17,7 +17,7 @@ import 'package:purohitset_app/Guruji_Side/Views/Auth/login_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/My_Booking/booking_history_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/chatting_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/profile_screen.dart';
-import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/reels_screen.dart';
+import 'package:purohitset_app/Guruji_Side/Views/BottomNavigationBar/wallet_screen.dart';
 import 'package:purohitset_app/Guruji_Side/Views/Profile/update_profile_screen.dart';
 import 'package:purohitset_app/Widget/common_background.dart';
 import 'package:purohitset_app/Widget/rps_custom_painter.dart';

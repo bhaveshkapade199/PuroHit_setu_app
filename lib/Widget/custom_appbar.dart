@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:purohitset_app/Widget/rps_custom_painter.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final String? title;
   final String? subtitle;
   final double appBarHeight;
 
@@ -22,7 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   const CustomAppBar({
     super.key,
-    required this.title,
+    this.title,
     this.subtitle,
     this.appBarHeight = 120,
     this.showLogo = true,
@@ -74,7 +74,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                             }
                           },
                       icon: const Icon(
-                        Icons.arrow_back,
+                        Icons.arrow_back_ios,
                         color: Colors.white,
                         size: 22,
                       ),
@@ -89,47 +89,53 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                 ],
 
-                // Title and subtitle remain visible
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: centerTitle
-                        ? CrossAxisAlignment.center
-                        : CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        textAlign: centerTitle
-                            ? TextAlign.center
-                            : TextAlign.start,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-
-                      if (subtitle != null && subtitle!.isNotEmpty) ...[
-                        const SizedBox(height: 3),
-                        Text(
-                          subtitle!,
-                          textAlign: centerTitle
-                              ? TextAlign.center
-                              : TextAlign.start,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                // Optional title and subtitle
+                if ((title != null && title!.isNotEmpty) ||
+                    (subtitle != null && subtitle!.isNotEmpty))
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: centerTitle
+                          ? CrossAxisAlignment.center
+                          : CrossAxisAlignment.start,
+                      children: [
+                        if (title != null && title!.isNotEmpty)
+                          Text(
+                            title!,
+                            textAlign: centerTitle
+                                ? TextAlign.center
+                                : TextAlign.start,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
+
+                        if (subtitle != null && subtitle!.isNotEmpty) ...[
+                          if (title != null && title!.isNotEmpty)
+                            const SizedBox(height: 3),
+                          Text(
+                            subtitle!,
+                            textAlign: centerTitle
+                                ? TextAlign.center
+                                : TextAlign.start,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ),
+                    ),
+                  )
+                else
+                  const Spacer(),
 
                 // Custom actions
                 if (actions != null) ...actions!,
